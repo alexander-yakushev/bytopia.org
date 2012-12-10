@@ -1,0 +1,106 @@
+#+title: Browsers on WM8505 Linux
+#+tags: linux wm8505
+#+OPTIONS: toc:nil author:nil
+
+Being a proud owner of WM8505 mini netbook I spent a lot of time
+tinkering with it. This little noname machines ship with preinstalled
+WinCE that is very close to useless, so as soon as I got the netbook I
+installed [[http://bento-linux.org/wiki/vt8505/wm8505/debian][this Debian distribution]] on it. And since I don't want my
+time to be utterly wasted I decided to start a series of post
+concering different aspects of using Linux on WM8505 netbooks. In this
+very entry I would talk about different browsers available for this
+installation, from the simplest to the most functional. So, let's
+start.
+
+#-readmore
+
+/Note: most of the information here should be also relevant for VT8500 netbooks./
+
+
+** Links/Elinks/Lynx
+
+The family of text browsers that can work even without X Server.
+*elinks* is available in the Debian squeeze repository (I didn't check
+others). You may consider using any of these browsers to quickly find
+and read some plain-text information without starting Xorg.
+
++ the fastest browser, can run in console
+
+- text-only, does not support CSS, Javascript, images
+
+Website: [[http://elinks.or.cz/]]
+
+** Dillo
+
+Unfortunatelly I didn't manage to run Dillo on my WM8505. The reason
+is I couldn't find any debian-arm ports it and failed to compile it
+myself. Maybe in future I would finally beat it and update this entry.
+
+** Netsurf
+
+Fast and lightweight graphical browser standing somewhere near Dillo
+on our speed/functionality ladder. It is available in the repo by the
+name *netsurf*, it supports images and CSS, it has tabs. True
+candidate for the title of default browser for your mini netbook.
+
++ pretty fast, supports CSS and images
+
+- doesn't support JavaScript
+
+Website: [[http://www.netsurf-browser.org/]]
+
+** Luakit
+
+This browser is not so popular as others and that is strange. Luakit
+is a Webkit-based browser written in C and Lua, configurable in Lua
+itself (it is even referred not as browser, but as a
+browser-framework), uses Vim-like user interaction, supports
+JavaScript and at the top of that is very fast, sometimes even faster
+than Netsurf! If you use Awesome WM, then configuring luakit by
+editing rc.lua file will be very familiar to you. So far luakit is the
+best browser for my netbook I tried so I ended up using it as my
+default browser.
+
+Like all featured browsers on this list *luakit* is
+available in the repo.
+
++ very fast, very functional, highly configurable
+
+- Vim-like hotkeys could be unusual for new users, doesn't have many
+  features (like password storage) out of the box
+
+Website: [[http://luakit.org/projects/luakit/]]
+
+** Arora
+
+Arora is considered to be one of the fastest "heavyweight" browsers.
+It can be installed from the repository, but uses Qt and I suppose
+because of that it fails to run on my netbook (actually, it shows up
+for a minute, doesn't respond for anything and then closes). If anyone
+can run it on WM8505 write me how you did it:).
+
+** Iceweasel(Firefox)/Iceape(Seamonkey)
+
+The heaviest browsers in the review. These two differs only in that
+Firefox is only a browser, but Iceape is an internet suite containing
+browser, mail client and some other modules. Though they both use the
+same engine for webpage rendering.
+
+Firefox is indeed the most functional browser here, it is
+plugin-extendable and supports all modern standarts. Though with
+capabilities comes the price - Firefox is very slow when running on
+WM8505. Loading it takes about a minute and the browsing itself is
+much slower compared to above-mentioned browsers. You can still keep
+it as a reserve browser to open some complex website but day-to-day
+usage of Firefox is uncomfortable.
+
++ "adult" browser, supports everything, customizable with plugins
+
+- slow, heavy, big loading time
+
+** Conclusion
+
+After trying all these browsers I came up with keeping three of them:
+elinks, luakit and firefox. Elinks is good for fast browsing, luakit
+is the best daily browser and firefox is always capable of displaying
+some tricky page that luakit failed to do.

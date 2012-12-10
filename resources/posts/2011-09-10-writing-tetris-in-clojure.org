@@ -1,0 +1,536 @@
+#+title: Writing Tetris in Clojure
+#+tags: clojure programming
+#+OPTIONS: toc:nil author:nil
+
+#+begin_html
+<p><img class="entry-img-right" width="200"
+src="/images/post/tetris-scrshot.png" alt="Screenshot of the finished
+application"/></p>
+#+end_html
+
+Good evening to everyone. Today I want to guide you step-by-step
+through the process of writing a game of Tetris in [[http://clojure.org/][Clojure]]. My goal
+was not to write the shortest version possible but the concisest one
+and the one that would use idiomatic Clojure techniques (like relying
+on the sequence processing functions and making a clear distinction
+between purely functional and side-effect code). The result I got is
+about 300 lines of code in size but it is very comprehensible and
+simple. If you are interested then fire up your editor of choice and
+let’s get our hands dirty.
+
+The full listing is available [[https://gist.github.com/1207703][here]].
+
+#-readmore
+
+* Briefing
+
+First let’s figure out how our tetris game model will be represented.
+The first idea that comes to mind is to represent the glass (and the
+blocks) as a two-dimensional array (array of rows to be more precise).
+The glass and the falling figure in our game will be stored in two
+different atoms, so we will also need an atom to store figure’s
+current coordinates. The glass will contain numbers that will mean a
+state of the cell – empty (0) or stationary filled (2). The filled
+cells in the moving figure will be represented by ones (1). Why this
+distinction is crucial we will see a bit later.
+
+* Preparation
+
+We will use [[https://github.com/technomancy/leiningen][leiningen]], so open the *project.clj* of the newly created
+project and put these lines there:
+
+#+begin_src clojure
+(defproject tetris "1.0.0-SNAPSHOT"
+  :description "Simple tetris written in Clojure"
+  :dependencies [[org.clojure/clojure "1.2.0"]
+                 [org.clojure/clojure-contrib "1.2.0"]
+                 [deflayout "0.9.0-SNAPSHOT"]]
+  :dev-dependencies [[swank-clojure "1.2.1"]]
+  :main tetris.core)
+#+end_src
+
+Note: deflayout is a small library (actually, a couple of macros). I
+once wrote to define Swing GUI more easily. I don’t maintain it
+anymore, so please consider using mature Clojure GUI frameworks like
+[[https://github.com/daveray/seesaw][Seesaw]] for larger projects.
+
+Now open *src/tetris/core.clj* file and start with this snippet:
+
+#+begin_src clojure
+(ns tetris.core
+  (:import (java.awt Color Dimension BorderLayout)
+    (javax.swing JPanel JFrame JOptionPane JButton JLabel)
+    (java.awt.event KeyListener))
+  (:use clojure.contrib.import-static deflayout.core
+        clojure.contrib.swing-utils)
+  (:gen-class))
+
+(import-static java.awt.event.KeyEvent VK_LEFT VK_RIGHT VK_DOWN VK_UP VK_SPACE)
+#+end_src
+
+We have just declared what we are going to use in our Tetris implementation.
+
+#+begin_src clojure
+(def empty-cell 0)
+(def moving-cell 1)
+(def filled-cell 2)
+(def glass-width 10)
+(def glass-height 20)
+(def zero-coords [3 0])
+
+(def stick [[0 0 0 0]
+            [1 1 1 1]
+            [0 0 0 0]
+            [0 0 0 0]])
+
+(def square [[1 1]
+             [1 1]])
+
+(def tblock [[0 0 0]
+             [1 1 1]
+             [0 1 0]])
+
+(def sblock [[0 1 0]
+             [0 1 1]
+             [0 0 1]])
+
+(def zblock [[0 0 1]
+             [0 1 1]
+             [0 1 0]])
+
+(def lblock [[1 1 0]
+             [0 1 0]
+             [0 1 0]])
+
+(def jblock [[0 1 1]
+             [0 1 0]
+             [0 1 0]])
+
+(def figures [stick square tblock sblock zblock lblock jblock])
+#+end_src
+
+Everything was very simple so far. We have defined some constants and
+the main characters of our game.
+
+* Functional code
+
+First we need to write a few helper functions to work with our data
+structures more in terms of the problem domain.
+
+#+begin_src clojure
+(def create-vector (comp vec repeat))
+
+(defn create-glass[]
+  (create-vector glass-height
+                 (create-vector glass-width empty-cell)))
+#+end_src
+
+As we have stated earlier our glass would be an array of rows. In
+order to avoid the confusion of what coordinate to put first let’s
+write the following function:
+
+#+begin_src clojure
+(defn pick-cell [figure x y]
+  (get-in figure [y x]))
+#+end_src
+
+Next we need a function that will work like map but for matrices. Here
+is its implementation:
+
+#+begin_src clojure
+(defn mapmatrix [func matrix]
+  (into [] (map-indexed (fn[y vect]
+                          (into [] (map-indexed (fn[x el]
+                                                  (func el x y))
+                                                vect)))
+                        matrix)))
+#+end_src
+
+This code is fairly simple. We map through the list of rows using
+=map-indexed= (which consequently applies to a given function each
+element of the collection alongside with element’s number), and for
+each row we map through it replacing each cell value with the result
+of applying the function =func= to the current cell state and its
+coordinates.
+
+#+begin_src clojure
+(defn rotate-figure [fig]
+  (let [fsize (count fig)]
+    (mapmatrix #(pick-cell fig (- fsize %3 1) %2) fig)))
+#+end_src
+
+Note how we have defined the rotate function in the language of the
+problem domain. To rotate a figure of the size S we need to replace
+each cell with the coordinates (X,Y) by a cell with the coordinates
+(S-Y,X). This is exactly how the function is defined.
+
+#+begin_src clojure
+(defn apply-fig [glass fig [figx figy]]
+  (let [fsize (count fig)]
+    (mapmatrix (fn[el gx gy]
+                 (if (and
+                       (<= figx gx (+ figx fsize -1))
+                       (<= figy gy (+ figy fsize -1)))
+                   (+ el (pick-cell fig (- gx figx) (- gy figy)))
+                   el))
+      glass)))
+#+end_src
+
+This is the most important function in the whole program. It takes a
+glass, a figure and figure’s coordinates and puts the figure onto the
+glass. To do this it maps through entire glass and substitutes those
+cells on the glass that are covered by the figure with the sum of
+current glass’ cell and the respective cell from the figure. So to say
+it adds the figure to the glass. As a result a new glass will be
+returned with zeros as empty cells, ones as figure’s cells, twos as
+fixed cells and threes being the cells where fixed cell and figure’s
+cell overlapped. This fact will be used later on to determine the
+correctness of the current glass.
+
+#+begin_src clojure
+(defn destroy-filled [glass]
+  (let [clear-glass
+        (remove (fn[vect]
+                  (not-any? #(= % empty-cell) vect)) glass)
+        destroyed (- glass-height (count clear-glass))]
+    [(into (vec (repeat
+                 destroyed
+                 (create-vector glass-width empty-cell)))
+           (vec clear-glass)) destroyed]))
+#+end_src
+
+This function removes the field rows from the glass and instead adds
+empty rows to the top of the glass. It is implemented just as the
+previous sentence stated: first it removes all rows that have no empty
+cells. Then it counts how many rows were removed by substituting the
+new number of rows from the initial one. Finally it creates the
+necessary number of empty rows and adds them to the top of the glass.
+Note that this function returns a vector of two values – a new glass
+and the number of destroyed rows. We’ll make use of it later.
+
+#+begin_src clojure
+(defn fix-figure [glass-with-fig]
+  (mapmatrix (fn[el & _]
+               (if (= el moving-cell)
+                  filled-cell
+                  el))
+    glass-with-fig))
+#+end_src
+
+This function given the glass with the figure applied to it replaces
+moving cells (represented by 1s) by fixed cells. We will call this
+function on the glass when the figure will fall to the bottom of the
+glass.
+
+#+begin_src clojure
+(defn count-cells [glass value]
+  (reduce + (map (fn[vect]
+                   (count (filter #(= % value) vect)))
+                 glass)))
+#+end_src
+
+This simple function counts how many occurences of value is there in
+the glass.
+
+#+begin_src clojure
+(defn legal? [glass]
+  (= (count-cells glass moving-cell) 4))
+#+end_src
+
+Now when we have the function =count-cells= we can define the function
+=legal?= very easily. The glass is legal if the number of moving cells
+equals four. Thus this function will instantly tell us that some part
+of the falling figure was lost (when rotated near the edge of the
+glass or near the fixed blocks or the figure was just moved out from
+the glass) and we won’t accept such player’s move.
+
+#+begin_src clojure
+(defn move
+  ([glass fig [figx figy] shiftx shifty]
+    (let [newx (+ figx shiftx)
+          newy (+ figy shifty)
+          newglass (apply-fig glass fig [newx newy])]
+      (when (legal? newglass) [newx newy])))
+  ([glass fig coords direction]
+    (cond
+      (= direction :down) (move glass fig coords 0 1)
+      (= direction :left) (move glass fig coords -1 0)
+      (= direction :right) (move glass fig coords 1 0))))
+#+end_src
+
+This function does the following: given the glass, figure, figure’s
+coordinates and the direction of movement it tries to apply the figure
+to the glass with the new coordinates. If the glass stays legal after
+the move (the figure is not out of the glass’ bounds and is not inside
+the fixed cells) then these new coordinates are returned, nil
+otherwise.
+
+* Side-effects code
+
+Now when all the purely functional code is written (and its size is
+only about 100 hundred lines) we can get to the code that will change
+something. But first as always we need to define some constants:
+
+#+begin_src clojure
+(def score-per-line 10)
+
+(defmacro defatoms [& atoms]
+  `(do
+     ~@(map (fn[a#] `(def ~a# (atom nil))) atoms)))
+
+(defatoms *glass* *fig-coords* *current-fig* *next-fig* *score*)
+#+end_src
+
+Here I used a tiny bit of metaprogramming to avoid writing /(def
+atomname (atom nil))/ for each of the atoms I want to define. Not that
+it would be so cumbersome to do it for five atoms but I wanted to show
+an example how macros do the repetitive stuff for you. I mark all
+atoms with asterisks just to distinct them easier.
+
+#+begin_src clojure
+(defn complete-glass[]
+  (apply-fig @*glass* @*current-fig* @*fig-coords*))
+
+(defn done-callback [n]
+  (swap! *score* #(+ % (* n score-per-line))))
+#+end_src
+
+The first function just applies our mutable figure to our mutable
+glass yielding a new glass. The second one is a callback function that
+we will call after calling =destroy-filled= on the glass in order to
+count the points scored.
+
+#+begin_src clojure
+(defn move-to-side [dir]
+  (let [newcoords
+        (move @*glass* @*current-fig* @*fig-coords* dir)]
+    (if newcoords
+      (reset! *fig-coords* newcoords))))
+#+end_src
+
+This function takes =:left= or =:right= as an argument. It tries to
+move the current figure to the given direction with the function =move=.
+If it returns a non-nil value (which means that the move is legal)
+then it sets the new coordinates for the current figure.
+
+#+begin_src clojure
+(defn move-down[]
+  (let [newcoords
+        (move @*glass* @*current-fig* @*fig-coords* :down)]
+    (if newcoords
+      (reset! *fig-coords* newcoords)
+      (let [[newglass d-count] (-> (complete-glass)
+                                   fix-figure
+                                   destroy-filled)]
+        (reset! *glass* newglass)
+        (reset! *fig-coords* zero-coords)
+        (reset! *current-fig* @*next-fig*)
+        (reset! *next-fig* (rand-nth figures))
+        (done-callback d-count)
+        (when-not (legal? (complete-glass)) :lose)))))
+#+end_src
+
+This function works a bit differently from the previous one. It also
+tries to move the figure down and checks if the result position is
+legal. If it is not then it means that the figure has fallen all the
+way to the bottom. So we should fix it, destroy the filled rows in the
+new glass (if any), swap the current figure with the next one,
+randomly pick new next figure and set its coordinates to initial and
+call the =done-callback= function so it can update the score. Finally
+we have to check if the new current figure is positioned illegally
+from the start (this means that the glass is completely filled) and if
+so return =:lose=.
+
+#+begin_src clojure
+(defn move-all-down[]
+  (move-down)
+  (let [newcoords
+        (move @*glass* @*current-fig* @*fig-coords* :down)]
+    (when newcoords (recur))))
+#+end_src
+
+This function moves the figure down until it hits the floor.
+
+#+begin_src clojure
+(defn rotate-current[]
+  (let [rotated (rotate-figure @*current-fig*)]
+    (if (legal? (apply-fig @*glass* rotated @*fig-coords*))
+      (swap! *current-fig* rotate-figure))))
+#+end_src
+
+The job of this function is to try rotating the current figure, see if
+the outcoming position is legal and if so replace the current figure
+with rotated one.
+
+#+begin_src clojure
+(defn new-game[]
+  (reset! *glass* (create-glass))
+  (reset! *fig-coords* zero-coords)
+  (reset! *current-fig* (rand-nth figures))
+  (reset! *next-fig* (rand-nth figures))
+  (reset! *score* 0))
+#+end_src
+
+This function just sets the atoms to the initial values.
+
+* GUI code
+
+In the final chapter we will write the code that will display and
+allow us to control our Tetris game.
+
+#+begin_src clojure
+(def cell-size 20)
+(def border-size 3)
+(def timer-interval 300)
+(def game-running (atom false))
+#+end_src
+
+Some constants defining the size of the cell in pixels, the speed of
+the game and the flag that will tell the main loop if the game is in
+progress.
+
+#+begin_src clojure
+(defn fill-point [g [x y] color]
+  (.setColor g color)
+  (.fillRect g
+    (* x cell-size) (* y cell-size)
+    cell-size cell-size)
+  (when-not (= color (Color/gray))
+    (.setColor g (.brighter color))
+    (.fillRect g
+      (* x cell-size) (* y cell-size)
+      border-size cell-size)
+    (.fillRect g
+      (* x cell-size) (* y cell-size)
+      cell-size border-size)
+    (.setColor g (.darker color))
+    (.fillRect g
+      (- (* (inc x) cell-size) border-size) (* y cell-size)
+      border-size cell-size)
+    (.fillRect g
+      (* x cell-size) (- (* (inc y) cell-size) border-size)
+      cell-size border-size)))
+
+(defn get-color [cell]
+  (cond
+    (= cell empty-cell) (Color/gray)
+    (= cell filled-cell) (new Color 128 0 0)
+    (= cell moving-cell) (new Color 0 128 0)
+    :else (new Color 0 128 0)))
+#+end_src
+
+This scary function actually just draws a cell with the given
+coordinates and a color, and if the cell is not empty draws a border
+for the cell to give it some kind of 3D look. The second is a helper
+function which returns a color for every cell type.
+
+#+begin_src clojure
+(defn paint-glass [g glass]
+  (mapmatrix (fn[cell x y]
+               (fill-point g [x y] (get-color cell)))
+    glass))
+#+end_src
+
+The function paints the whole glass on the given Graphics object by
+calling the function =fill-point= on every cell of the glass.
+
+#+begin_src clojure
+(defn game-panel []
+  (proxy [JPanel KeyListener] []
+    (paintComponent [g]
+      (proxy-super paintComponent g)
+      (doall (paint-glass g (complete-glass))))
+    (keyPressed [e]
+      (let [keycode (.getKeyCode e)]
+        (do (cond
+              (= keycode VK_LEFT) (move-to-side :left)
+              (= keycode VK_RIGHT) (move-to-side :right)
+              (= keycode VK_DOWN) (move-down)
+              (= keycode VK_UP) (rotate-current)
+              (= keycode VK_SPACE) (move-all-down))
+          (.repaint this))))
+    (getPreferredSize []
+      (Dimension. (* glass-width cell-size)
+        (* glass-height cell-size)))
+    (keyReleased [e])
+    (keyTyped [e])))
+#+end_src
+
+This function returns a JPanel instance with a few overridden methods.
+We override =paintComponent= method to make this panel draw the glass
+on itself and =keyPressed= to be able to control the game from the
+keyboard.
+
+#+begin_src clojure
+(defn next-panel []
+  (proxy [JPanel] []
+    (paintComponent [g]
+      (proxy-super paintComponent g)
+      (doall (paint-glass g @*next-fig*)))
+    (getPreferredSize []
+      (Dimension. (* 4 cell-size)
+        (* 4 cell-size)))))
+#+end_src
+
+This panel will draw the next figure on itself.
+
+#+begin_src clojure
+(defn game[]
+  (new-game)
+  (reset! game-running true)
+  (let [gamepanel (game-panel)
+        sidepanel (new JPanel)
+        nextpanel (next-panel)
+        scorelabel (JLabel. "Score: 0")
+        exitbutton (JButton. "Exit")
+        frame (JFrame. "Tetris")]
+    (deflayout
+      frame (:border)
+      {:WEST gamepanel
+       :EAST (deflayout (JPanel.) (:border)
+               {:NORTH (deflayout sidepanel (:flow :TRAILING)
+                         [nextpanel scorelabel])
+                :SOUTH exitbutton})})
+    (doto gamepanel
+      (.setFocusable true)
+      (.addKeyListener gamepanel)
+      (.repaint))
+    (doto frame
+      (.pack)
+      (.setVisible true))
+    (doto exitbutton
+      (add-action-listener (fn[_]
+                             (do
+                               (.setVisible frame false)
+                               (reset! game-running false)))))
+    (loop []
+      (when @game-running
+        (let [res (move-down)]
+          (if (= res :lose)
+            (JOptionPane/showMessageDialog frame "You lose!" )
+            (do
+              (.repaint gamepanel)
+              (.repaint nextpanel)
+              (.setText scorelabel (str "Score: " @*score*))
+              (. Thread sleep timer-interval)
+              (recur))))))))
+
+(defn -main [& args]
+  (game))
+#+end_src
+
+Finally we define our main function that creates a frame, puts
+everything on it, finishes some GUI business and starts the main loop.
+The main loop ticks every =timer-interval= milliseconds, forces the
+current figure to move one cell down, checks if the player haven’t
+lost yet and updates the information on the screen.
+
+And that’s all! We’ve managed to write a compact and concise Tetris
+implementation in Clojure. It is still pretty rough around the edges,
+especially its visual part but the code we came up with is extensible
+enough to fix it and add new features (like increasing the game speed)
+and so on.
+
+I sincerely hope you liked this article and learned something while
+reading. If you have some questions or noticed some mistakes feel free
+to contact me here or any way you are comfortable with. Happy hacking!

@@ -1,0 +1,91 @@
+#+title: Go console
+#+tags: linux
+#+OPTIONS: toc:nil author:nil
+
+Sooner or later every user who got started using
+GNU/Linux with fancy *Ubuntu* windows has
+to get acquainted with big and scary Console. White letters on the
+black background, lots of typing and no sings of light in this long
+tunnel. But is it so bad? Console is an excellent solution which can
+help to deal with lots of problems way faster than moving the mouse
+around.
+
+Another option why you should like working in a console is if you use
+*ssh* a lot. Sure you can connect to a remote terminal with ssh using
+-X option, so it would transfer the windows directly from one X11
+server to another. But this can still be a bit slow and annoying.
+
+Though, today we'll try to modify our working environment for active
+console usage and maximal convenience for that. I won't describe you
+common hot-keys or basic tips and tricks because there are loads of
+them on the Internet. I just want to share with some software that can
+make your migration to a console less hard and painful. So, here we
+go.
+
+#-readmore
+
+
+** Shell
+
+First of all, to use console effectively you have to have a good
+shell. You are probably equipped with *bash* or *dash*, but my choice
+is [[http://www.zsh.org/][zsh]]. Why zsh? It's command completion feature is really nice, it
+can complete arguments and parameters for most popular commands, it
+can correct your spelling mistakes, it shares the command history
+across all active shells. And above all that, zsh is very
+customizable. By the way [[https://github.com/robbyrussell/oh-my-zsh][oh-my-zs]] is an excellent point to start using
+zsh if you look for saner defaults.
+
+** Terminal multiplexer
+
+We need a terminal multiplexer if we don't want to spawn dozens of
+terminal windows (or we just cannot, as in ssh case). [[http://www.gnu.org/software/screen/][GNU screen]] is
+perfect for this. It can store multiple sessions in just one window,
+switch between them, operate them however you like. But the most
+toasty feature is sharable sessions, so that you can join remotely to
+a server, create a session, and then reconnect to the same session
+later (even from the other computer).
+
+** File manager
+
+For sure, you'd like to use [[http://www.midnight-commander.org/][mc]]. It is a great piece of software, very
+extensible and constantly evolving. It somehow resembles the
+well-known *Norton Commander*, so it will be easy for former nc users
+to get used to Midnight Commander.
+
+** Talking
+
+If you use *Pidgin*, you'll be glad there is [[http://developer.pidgin.im/wiki/Using%20Finch][finch]]. Finch is a console
+clone of pidgin, it has the same interface, it uses pidgin
+configuration, so you don't have to configure it at all. [[http://mcabber.com/][mcabber]] is an
+another nice program - it's a lightweight console XMPP client. It is
+highly configurable and has many handy features like external action
+triggers.
+
+** Music
+
+You probably already heard about [[http://mpd.wikia.com/wiki/Music_Player_Daemon_Wiki][mpd]]. Music Player Daemon is an
+fascinating software used all over the place where a network exists.
+It is a music server that can be controlled by any of the large amount
+of clients on the same computer or remotely. The simplest client for
+mpd is [[http://mpd.wikia.com/wiki/Client:Mpc][mpc]] - it has no interface at all, you just type commands to
+control the player. Hence, it requires no resources at all. The list
+of most popular mpd clients can be found [[http://mpd.wikia.com/wiki/Clients][here]].
+
+** Torrents
+
+If you use *Transmission* then your choice would probably be
+[[http://linux.die.net/man/1/transmission-daemon][transmission-daemon]] with transmission-cli. Daemon should be working on
+the server that would download torrents, and using client you can
+control the process, locally or remotely. Another option is a
+well-known [[http://libtorrent.rakshasa.no/][rtorrent]], even more client-server oriented and very
+extensible. There are clients for it that allow you manage your
+torrents via web interface from any computer which is really
+convenient.
+
+So, as you can see, console is full of programs that can easily
+replace their GUI counterparts. And although, you cannot do everything
+you want from the console (browsing, for instance. Nevertheless you
+can try [[http://elinks.or.cz/][elinks]]), terminal window can become your sincere and beloved
+friend - always accessible, always fast, always there to execute your
+dreams.

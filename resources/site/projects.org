@@ -1,0 +1,30 @@
+#+title: Projects
+#+description: Projects of mine
+#+OPTIONS: toc:nil
+
+Throughout my conscious life in IT I accumulated a couple of projects
+that might be worth sharing. Here's the list of them structured by
+categories.
+
+*** Clojure
+
+    - [[https://github.com/alexander-yakushev/lein-droid][lein-droid]] - a Leiningen plugin for building Clojure/Android applications.
+    - [[https://github.com/alexander-yakushev/neko][neko]] - a fork from [[https://github.com/sattvik/neko][sattvik's neko]] which is a toolkit library for
+      developing Android applications in idiomatic Clojure.
+
+*** Awesome WM
+
+    I've been an avid Awesome user for about three years now. I love
+    this window manager as well as the ability to modify and extend it
+    in every possible way.
+
+    - [[https://github.com/alexander-yakushev/conscience-awesome-theme][conscience]] - an advanced Awesome theme I currently use. [[https://github.com/alexander-yakushev/conscience-awesome-theme/blob/master/screenshot.png][Here's]]
+      how it looks like.
+    - [[https://github.com/alexander-yakushev/nice-and-clean-theme][nice-and-clean]] - simpler but still pretty and functional theme
+      I have used earlier.
+    - [[https://github.com/alexander-yakushev/menubar][menubar]] - a dmenu-style application launcher.
+    - [[https://github.com/alexander-yakushev/awesompd][awesompd]] - highly functional MPD widget/client with [[http://www.jamendo.com/][Jamendo]] support.
+    - [[https://github.com/alexander-yakushev/orglendar][Orglendar]] - parses Org-mode TODO files and displays them on the
+      calendar and in the agenda.
+    - [[http://awesome.naquadah.org/wiki/Quick_launch_bar_widget][Quick launch]] - a toolbar with application launcher buttons like one
+      all those big desktop environments have.

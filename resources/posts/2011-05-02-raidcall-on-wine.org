@@ -1,0 +1,18 @@
+#+title: Raidcall on Wine: problem with dnsapi.dll
+#+tags: linux wine
+#+OPTIONS: toc:nil author:nil
+
+Recently I stuck with a problem that had no solution around the
+Internet. Raidcall, a voice chat program exclusively for Windows,
+refused to start under Wine referring to the absent (or wrong) library
+dnsapi.dll. I found out that there is such library in
+./wine/drive_c/windows/system32/ folder. Replacing this file with
+original dnsapi.dll taken from Windows distribution didn’t help. So
+after that I opened *winecfg*, switched to *Libraries*, found
+*dnsapi.dll (native)* in the list and just removed it (Remove button
+is on the right). Then, after applying the changes, Raidcall finally
+started.
+
+Hope this would help somebody.
+
+#-readmore

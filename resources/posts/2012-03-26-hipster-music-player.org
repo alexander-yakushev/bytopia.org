@@ -1,0 +1,129 @@
+#+title: Hipster music player: when MPD is just too mainstream
+#+tags: linux shell
+#+OPTIONS: toc:nil author:nil
+
+One of the greatest features of GNU/Linux is that it shares the Unix
+amaziness of having lots of small tools which are easily combined
+together via stdin/stdout. Today we are going to explore the
+possibilities of playing MP3 files with these little tools.
+
+** aplay
+
+The simplest command to produce sounds is *aplay*. Prior to ALSA there
+was a device called /dev/dsp to which you could redirect any file and
+it would “play” it. Now aplay acts similarly. Try executing this:
+
+#+begin_src sh
+cat /path/to/wav/file | aplay
+#+end_src
+
+You can also send to aplay something that is formally not music at
+all. Consider an example:
+
+#+begin_src sh
+cat /bin/bash | aplay    # Sounds a bit like dubstep at the beginning!
+#+end_src
+
+As you can see aplay will play any binary stream you pass it.
+
+** mpg321
+
+This tools is a free (and less buggy) version of *mpg123* which is a
+dead simple MP3 player. First of all you can provide it with a list of
+files to play:
+
+#+begin_src sh
+mpg321 one.mp3 two.mp3
+#+end_src
+
+You can also supply the call with a playlist (which is a simple list
+of files to play):
+
+#+begin_src sh
+find *.mp3 > 1.pls   # Will scan the current dir for MP3 files and write their names to 1.pls
+mpg321 -@ 1.pls
+#+end_src
+
+mpg321 also supports playing from the stdin and writing output to the
+stdout.
+
+Right now you have a working MP3 player that you can pause (by
+pressing *Ctrl-Z* in the terminal. To bring it back type *fg %1*), play
+next track (by pressing *Ctrl-C* once. Pressing Ctrl-C twice in a rapid
+succession will stop the playback).
+
+** Cool stuff
+
+We hadn’t seen anything cool so far. OK, a poor man’s “player”
+controllable from shell. Can you do with it anything at all? Well,
+perhaps there are things you can. For example, streaming the songs
+directly to another computer via ssh!
+
+#+begin_src sh
+cat /path/to/mp3 | mpg321 -w - - | ssh user@192.168.0.1 aplay
+#+end_src
+
+*-w -* option to *mpg321* means that it would output the wav file to
+  the stdout. The second *-* tells it that it should take output from
+  stdin. The output from mpg321 is then passed via ssh to the *aplay*
+  which would play the stream on the remote machine.
+
+Nothing stops you from translating a series of tracks. Actually MP3
+files are excellently concatenable with mere *cat*:
+
+#+begin_src sh
+cat *.mp3 | mpg321 -w - - | ssh user@192.168.0.1 aplay
+#+end_src
+
+This kind of “translation” has its weakness – you can’t stop it from
+the target machine unless putting down *sshd* or sound system (Did I
+say weakness?:)). To achieve some better feeling of an Internet radio
+you can use *netcat*:
+
+#+begin_src sh
+cat *.mp3 | mpg321 -w - - | nc -l -p 9999
+#+end_src
+
+From the other machine just type the following:
+
+#+begin_src sh
+nc first.machine.ip.address 9999 | aplay
+#+end_src
+
+Voila! You have an Internet music radio going directly to your audio
+device. How more awesome can this be? Well, there are certain
+limitations of the approach: it doesn’t support multiple connections
+and doesn’t restart listening the port after the client disconnects.
+These issues are fixable but are probably close to rewriting
+Icecast:).
+
+Here’s the command to make our Radio “Netcat” a bit more spicy:
+
+#+begin_src sh
+find -name "*.mp3" | sort -R | sed -E 's/(.+)/"\1"/' | xargs cat | mpg321 -w - - | nc -L -p 9999
+#+end_src
+
+If you execute it from the root of your music folder it will find all
+MP3 files, shuffle them, wrap names into quotes (this is done to fight
+a *xargs* issue) and stream it to our 9999 port.
+
+** The final neat feature
+
+If you can redirect anything to aplay why can’t you send it… your own
+voice! It is as simple as this:
+
+#+begin_src sh
+arecord | ssh user@192.168.0.1 aplay
+#+end_src
+
+*arecord* will record the input from the microphone and send it via pipe
+directly to the sound output of the target computer. Execute the same
+command from the second computer (with first computer’s IP address
+respectively) and you’ll have a super-secured overly-hipster voice
+connection (still with a couple of seconds lag:)). Who needs that
+crappy Skype anyway?
+
+I covered a little bit of examples of what you can do provided a
+certain knowledge of Linux tools and a certain amount of stupidity.
+Hope this proves useful to somebody and remember – I was using this
+before it was cool!
