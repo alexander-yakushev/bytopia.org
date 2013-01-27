@@ -9,6 +9,12 @@
  :encoding "UTF-8"
  :blog-as-index false
  :create-archives false
+
+ :rsync "rsync"
+ :host "openshift"
+ :user ""
+ :deploy-dir "~/app-root/repo/php/"
+
  :emacs "/usr/bin/emacs"
  :emacs-eval ['(add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-1.11.5/")
               '(add-to-list 'load-path "~/.emacs.d/elpa/htmlize-1.39/")

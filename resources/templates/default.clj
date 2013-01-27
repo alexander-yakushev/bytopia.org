@@ -2,8 +2,7 @@
 [:html
  {:xmlns "http://www.w3.org/1999/xhtml", :lang "en", :xml:lang "en"}
  [:head
-  [:meta
-   {:http-equiv "content-type", :content "text/html; charset=UTF-8"}]
+  [:meta {:http-equiv "content-type", :content "text/html; charset=UTF-8"}]
   [:meta {:name "description", :content (:description metadata)}]
   [:meta {:name "keywords", :content (:tags metadata)}]
   [:meta {:name "author", :content (:site-author (static.config/config))}]
@@ -50,8 +49,7 @@
       [:div
        [:label {:class "screen-reader-text", :for "s"} "Search for:"]
        [:input {:id "s", :name "q", :value "", :type "text"}]
-       [:input {:type "hidden" :name "sitesearch"
-                :value "bytopia.org"}]
+       [:input {:type "hidden" :name "sitesearch", :value "www.bytopia.org"}]
        [:input {:id "searchsubmit", :value "Search", :type "submit"}]]]]
     [:div {:class "clear"}]
     [:div {:id "main"}
@@ -87,11 +85,20 @@
          [:li [:a {:href (static.core/post-url f)} (:title metadata)]])]]
      [:div {}
       [:h2 {:class "title"} "Tags"]
-      (reduce (fn [div tag-kw]
-                (conj div [:a {:href (str "/tags/#" (name tag-kw))}
-                           (name tag-kw)] " "))
-              [:div {:id "taglist"}]
-              (keys (static.core/tag-map)))]]]]
+      [:ul {}
+       (reduce (fn [div tag-kw]
+                 (conj div [:a {:href (str "/tags/#" (name tag-kw))}
+                            (name tag-kw)] " "))
+               [:li {:id "taglist"}]
+               (keys (static.core/tag-map)))
+       ;; [:li {} "foobar"]
+       ]]
+     [:div {}
+      [:h2 {:class "title"} "Subscribe"]
+      [:ul {}
+       [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS feed"]]]]
+     ]]]
+
   [:div {:id "footer"}
    [:div {:id "footerbox"}
     ;; [:a {:href "/rss-feed"} " RSS Feed"]

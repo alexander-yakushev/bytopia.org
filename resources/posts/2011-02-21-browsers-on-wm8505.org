@@ -16,7 +16,6 @@ start.
 
 /Note: most of the information here should be also relevant for VT8500 netbooks./
 
-
 ** Links/Elinks/Lynx
 
 The family of text browsers that can work even without X Server.
