@@ -235,12 +235,17 @@ ol li{
 #main #searchform div{
     border:none
 }
-#searchform #searchsubmit{
-    cursor: pointer;
+
+#searchform #searchsubmit {
     width:55px;
     height:25px;
     margin-left:1px;
 }
+
+#searchform #searchsubmit, .juvia-action input {
+    cursor: pointer;
+}
+
 #navigation #searchform .screen-reader-text{
     display:none;
 }
@@ -250,7 +255,7 @@ ol li{
     padding: 3px 10px;
     width: 160px;
 }
-#searchsubmit {
+#searchsubmit, .juvia-action input {
     color:#3e3e3e;
 }
 
@@ -315,14 +320,16 @@ input, textarea {
 textarea {
     padding: 0.5em 10px;
 }
+
 /*sidebar*/
 #sidebar ul {
     margin:0px;
     padding:0;
     line-height:24px;
-    list-style: none;
+    /* list-style: none; */
     overflow:hidden;
 }
+
 #sidebar h2{
     padding:8px 0 7px 10px;
     margin-top:0;
@@ -332,17 +339,23 @@ textarea {
     border-bottom-width:5px;
     border-bottom-style:solid;
 }
+
 #sidebar ul li{
     padding:4px 0;
-    list-style:square inside;
+    /* list-style:inside; */
     padding-left:15px;
     padding-right:10px;
     border-bottom-width: 1px;
     border-bottom-style: solid;
 }
+
+#recent-posts li{
+    list-style:square inside;
+}
+
 #sidebar ul li ul {
     overflow:hidden;
-    list-style: none;
+    /* list-style: none; */
 }
 .entry-img-left {
     float: left;
@@ -442,7 +455,6 @@ a:hover{
 }
 
 #taglist {
-    padding:4px 20px;
     word-wrap:normal;
     line-height:2;
     text-align:justify;
@@ -514,9 +526,13 @@ table td{
 #searchform div{
     border-color:#BBBBB6;
 }
-#searchform #searchsubmit{
-    border-color:#EEE;
+
+#searchform #searchsubmit, .juvia-action input {
     background:#E1E1E1;
+}
+
+#searchform #searchsubmit {
+    border-color:#EEE;;
 }
 
 #searchform #searchsubmit:active{
@@ -547,7 +563,7 @@ table td{
 }
 
 .outline-2 h2 {
-    border-bottom: 1px solid rgb(204, 204, 204);
+    /* border-bottom: 1px solid rgb(204, 204, 204); */
     clear: both;
 }
 
@@ -682,3 +698,28 @@ ul.posts li span {
     font-family:monofur, monaco, courier;
     color:#888;
 }
+
+#comments {
+    font: 13px/1.231 "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    font-size: small;
+}
+
+#rss-feed {
+    background: url("/images/rss.png") no-repeat scroll 0px 4px transparent;
+    padding-left: 22px;
+    padding-top: 2px;
+    /* padding: 0px 0px 0px 0px; */
+    float: left;
+    /* text-decoration: none; */
+    display: block;
+    height: 26px;
+    /* line-height: 25px; */
+}
+
+/* .juvia-preview-content { */
+/*     background-color: rgb(227, 227, 227); */
+/* } */
+
+/* #comments-separator { */
+/*     border-bottom: 1px solid rgb(204, 204, 204); */
+/* } */

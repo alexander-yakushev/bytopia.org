@@ -73,7 +73,10 @@
 
       content
 
-      ]]
+      (when (= (:type metadata) :post)
+        [:div {:id "comments"}
+         [:script {:src "/juvia.js", :type "text/javascript"}]])]]
+
     [:div {:id "sidebar"}
      [:div {}
       [:h2 {:class "title"} "Recent posts"]
