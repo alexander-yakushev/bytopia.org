@@ -1,0 +1,74 @@
+#+title: Welcome!
+#+tags: misc
+#+OPTIONS: toc:nil author:nil
+
+So I have finally overcome my laziness and finished this site. The
+idea for a personal standalone blog came to me almost a year ago when
+I bought this domain. Now at last I've made something that I'm not
+very ashamed to show others.
+
+I pursued a few reasons when I decided to move from cozy and curated
+Wordpress/Blogger-like environment into the wild. Primarily, I want to
+be able to prepare posts using an editor instead of a browser. Second,
+I want my articles to be stored as files rather than some database
+entries. Finally, managing your stuff personally gives you much more
+freedom in manipulating it.
+
+#-readmore
+
+For now, I migrated some of the articles from my previous blog.
+Eventually I'll move them all and, of course, will write new articles
+(my stash of ideas is full as ever). I sincerely hope you will enjoy
+this blog and will come here from time to time.
+
+* Software behind Bytopia
+
+** OpenShift
+
+   [[https://openshift.redhat.com/app/][OpenShift]] by RedHat is a free Platform as a Service solution that
+   supports many application servers for different languages as well
+   as allows you to experiment with frameworks not yet supported.
+   Right now I use it just as a free hosting for website and Juvia
+   (see below) but my plans include OpenShift as a cloud platform for
+   a more complex web application.
+
+** Static
+
+   [[http://nakkaya.com/static.html][Static]] is a simple static blog generator written by Nurullah Akkaya
+   in Clojure. I chose this exact blog generator instead of Jekyll and
+   the like for the following reasons:
+   - Static supports generation from org-mode files.
+   - It uses Emacs for transforming org-files into HTML. Confusing at
+     first, this method is very elegant and effective. For instance, I
+     get code highlighting for free - Emacs highlights code in
+     resulting HTML itself.
+   - It is written in Clojure, so it was very easy for me to add some
+     extra functionality. Also Hiccup (generates HTML from Clojure
+     data structures) is used for templating which almost entirely reduces the pain of
+     writing HTML.
+   - Static is very small - only 400 SLOC, so I was able to comprehend
+     its codebase in one evening.
+
+** Emacs and org-mode
+
+   [[http://orgmode.org/][org-mode]] is a wonderful tool for taking notes, scheduling tasks and
+   events and writing. The text you enter can be easily structured and
+   navigated, special tags allow embedding code that is automatically
+   highlighted in the end. Emacs is simply the best text editor, nuff
+   said.
+
+** Juvia
+
+   Comments are managed by [[https://github.com/phusion/juvia][Juvia]] - GPL-licensed commenting server. It
+   is somewhat similar to Disqus but you need to host it yourself. My
+   Juvia instance runs on OpenShift as well. Not much else to say here
+   except that Juvia is very AJAX-oriented, has a nice admin panel,
+   supports gravatars, doesn't require registration to comment (a huge
+   advantage over Disqus!) and allows Markdown in comments.
+
+
+
+
+
+
+
