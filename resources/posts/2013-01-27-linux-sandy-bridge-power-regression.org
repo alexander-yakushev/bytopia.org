@@ -1,0 +1,42 @@
+#+title: Fix Sandy Bridge power regression issue in 3.6-3.7 kernel
+#+tags: linux thinkpad
+#+OPTIONS: toc:nil author:nil
+
+Proud owners of Intel Sandy Bridge-powered laptops have been
+experiencing power regression problems for three months now. Starting
+somewhere at 3.6.x kernel the power consumption suddenly seared high
+as well as the overall CPU temperature. My typical laptop temperature
+being around 45°C with introduction of 3.6 it rose to 80. Average
+battery life jumped from 3-4 hours to pathetic hour and a half.
+Briefly speaking the changes were too much to bear so I rolled back to
+3.5.6 and stayed there for these three months.
+
+Eventually the commit that introduced the regression was identified
+but neither 3.6 branch nor 3.7 hadn't got it reverted in them. Only
+3.8 branch finally fixed the problem but it is still in its release
+candidate status, so it's a question when will it reach the general
+audience.
+
+I've been for some time following [[https://bbs.archlinux.org/viewtopic.php?id=150743&p=1][this thread]] where Arch users shared
+their experiences with different kernel versions. William Giokas is a
+regular poster there, and he is the person who kindly builds the
+newest versions of the kernel for Arch Linux. Here's a [[http://sakuscans.com/pacmanpkg/x86_64/00README][README]] on how
+to install his kernels instead of building them on your own.
+
+After I had upgraded to 3.8-rc5 from 3.5.6 I didn't notice any visible
+regression in power consumption and temperature. The temperature
+floats around 47-48 degrees and the consumption averages on 15W mark.
+
+The process of upgrading to kernel built by William is pretty
+straightforward. Here it is step by step:
+
+- add William's repo to your pacman.conf as described in README;
+- install *linux-mainline* package;
+- update grub to include the new kernel in the list;
+#+begin_src shell
+grub-mkconfig -o /boot/grub/grub.cfg
+#+end_src
+- rebuild *tlp* and *tp_smapi-mainline* packages from AUR.
+
+Now you can safely update all other packages that you otherwise
+postponed because of the kernel rollback.
