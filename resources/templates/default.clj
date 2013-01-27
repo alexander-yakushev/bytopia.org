@@ -19,7 +19,8 @@
   (if (= (:type metadata) :post)
     [:link {:rel "canonical"
 	    :href (str (:site-url (static.config/config)) (:url metadata))}])
-  [:title (:title metadata)]]
+  [:title (:title metadata)]
+  [:script {:src "/ga.js"}]]
  [:body
   [:div {:id "header"}
    [:h1 {:class "site-name"}
@@ -99,6 +100,8 @@
      [:p ;; {:class "support"}
       "Powered by " [:a {:href "http://nakkaya.com/static.html"} "Static"]
       " | Theme " [:a {:href "http://axiu.me"} "mxs"]]]]]
+
+  ;; "<script type=\"text/javascript\" src=\"/ga.js\"></script>"
   ]]
 
 
