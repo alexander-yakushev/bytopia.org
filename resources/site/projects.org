@@ -6,6 +6,11 @@ Throughout my conscious life in IT I accumulated a couple of projects
 that might be worth sharing. Here's the list of them structured by
 categories.
 
+*** Java
+
+    - [[https://github.com/alexander-yakushev/abalone-android][abalone-android]] - a popular board game for two players written
+      for Android.
+
 *** Clojure
 
     - [[https://github.com/alexander-yakushev/lein-droid][lein-droid]] - a Leiningen plugin for building Clojure/Android applications.
