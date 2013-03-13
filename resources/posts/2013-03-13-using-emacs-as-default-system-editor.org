@@ -49,14 +49,14 @@ emacsclient -nw
 
   #+begin_src sh
 #!/bin/sh
-FILE=`readlink -f $1` # Resolve a file to its full path
-[ -e "$FILE" ] || touch "$FILE" # Create a file if it does not exist
-PERMISSIONS=`stat $FILE --format "%U"` # Get file permissions
+FILE="`readlink -f \"$1\"`"
+[ -e "$FILE" ] || touch "$FILE"
+PERMISSIONS=`stat "$FILE" --format "%U"`
 
 if [ $PERMISSIONS == $USER ]; then
-    emacsclient -n $FILE # Simply open a file
+    emacsclient -n "$FILE"
 else
-    emacsclient -n /sudo::$FILE # Open a file with Tramp
+    emacsclient -n /sudo::"$FILE"
 fi
   #+end_src
 
