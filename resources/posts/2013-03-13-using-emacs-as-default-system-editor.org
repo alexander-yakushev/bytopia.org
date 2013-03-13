@@ -1,0 +1,70 @@
+#+title: Emacs as a default system editor
+#+tags: linux emacs
+#+OPTIONS: toc:nil author:nil
+
+Many novice Emacs users often complain about Emacs being slow to
+start. This makes them use alternative editors like *vi* or *nano* for
+quick edits. Emacs is indeed a slow beast to power up, but the
+following solution will show you that it's not much of an issue even
+if you want to make some quick changes in a single file.
+
+* Emacs daemon
+
+  If we can't reduce the Emacs start up time what could we possibly
+  do? We can start it less often - ideally only once when OS boots.
+  That is the basic idea behind running Emacs as a daemon. To do it
+  execute the following:
+
+  #+begin_src sh
+emacs --daemon &!
+  #+end_src
+
+  This will start Emacs in daemon mode and untie it from the parent
+  shell. You will see some debug info being printed into the console
+  and eventually stop. That's all, no windows popping out yet.
+
+  Now, let's make a client for that server:
+
+  #+begin_src sh
+emacsclient -c
+  #+end_src
+
+  An ordinary Emacs window will appear. You can run this command many
+  times, each time a different window will be spawned (just like after
+  executing =new-frame=. This is how you create a terminal-only
+  client:
+
+  #+begin_src sh
+emacsclient -nw
+  #+end_src
+
+  emacsclient can be executed with a file argument, which will open that file in
+  the existing Emacs client (if no other arguments were provided) or in a
+  new frame (if called with /-c/).
+
+* Script to use as your $EDITOR
+
+  I wrote this script for the sake of quick file editing,
+  especially when I'm working in my terminal.
+
+  #+begin_src sh
+#!/bin/sh
+FILE=`readlink -f $1` # Resolve a file to its full path
+[ -e "$FILE" ] || touch "$FILE" # Create a file if it does not exist
+PERMISSIONS=`stat $FILE --format "%U"` # Get file permissions
+
+if [ $PERMISSIONS == $USER ]; then
+    emacsclient -n $FILE # Simply open a file
+else
+    emacsclient -n /sudo::$FILE # Open a file with Tramp
+fi
+  #+end_src
+
+  This script is just enough for doing occasional edits. It handles
+  root-owned files as well using Tramp. Also I added /-n/ flag which
+  makes emacsclient immediately return after running, so my shell is
+  not hung until I close the file in Emacs.
+
+  That's it. Using the combination of Emacs daemon mode and the
+  provided script you can forget about spawning other editors and
+  cringing from their unfamiliar bindings.
