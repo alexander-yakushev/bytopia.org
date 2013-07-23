@@ -6,10 +6,8 @@
   [:meta {:name "description", :content (:description metadata)}]
   [:meta {:name "keywords", :content (:tags metadata)}]
   [:meta {:name "author", :content (:site-author (static.config/config))}]
-  ;; [:link {:rel "icon",
-  ;;         :href "/images/favicon.ico" :type "image/x-icon"}]
-  ;; [:link {:rel "shortcut icon",
-  ;;         :href "/images/favicon.ico" :type "image/x-icon"}]
+  [:link {:rel "icon", :href "/images/favicon.ico" :type "image/x-icon"}]
+  [:link {:rel "shortcut icon",:href "/images/favicon.ico" :type "image/x-icon"}]
   [:link {:rel "stylesheet", :type "text/css", :href "/default.css"}]
   [:link
    {:rel "alternate", :type "application/rss+xml",
