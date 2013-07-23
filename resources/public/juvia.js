@@ -1,12 +1,15 @@
 (function() {
+
+    var clear_key = location.href.match(/(http.*\/\/)?[^\/]+\/(.+)/)[2]
     var options = {
-        container   : '#comments',
-        site_key    : 'sjuqwxroko6rrz8c7nrgtkammm3xp2u',
-        topic_key   : location.href,
-        topic_url   : location.href,
-        topic_title : document.title || location.href,
-        include_base: !window.Juvia,
-        include_css : !window.Juvia
+        container     : '#comments',
+        site_key      : 'sjuqwxroko6rrz8c7nrgtkammm3xp2u',
+        topic_key     : clear_key,
+        topic_url     : 'bytopia.org/' + clear_key,
+        topic_title   : document.title || location.href,
+        include_base  : !window.Juvia,
+        include_css   : !window.Juvia,
+        comment_order : 'earliest-first',
     };
 
     function makeQueryString(options) {
