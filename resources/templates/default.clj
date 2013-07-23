@@ -1,4 +1,3 @@
-;;(doctype :xhtml-transitional)
 [:html
  {:xmlns "http://www.w3.org/1999/xhtml", :lang "en", :xml:lang "en"}
  [:head
@@ -16,7 +15,7 @@
   (if (= (:type metadata) :post)
     [:link {:rel "canonical"
 	    :href (str (:site-url (static.config/config)) (:url metadata))}])
-  [:title (:title metadata)]
+  [:title (str (:title metadata) " - " (:site-title (static.config/config)))]
   [:script {:src "/ga.js"}]]
  [:body
   [:div {:id "header"}
