@@ -3,7 +3,7 @@
     var clear_key = location.href.match(/(http.*\/\/)?[^\/]+\/(.+)/)[2]
     var options = {
         container     : '#comments',
-        site_key      : 'sjuqwxroko6rrz8c7nrgtkammm3xp2u',
+        site_key      : 'pz8xnj35e6ft21qoucct5p3vrye6onh',
         topic_key     : clear_key,
         topic_url     : 'bytopia.org/' + clear_key,
         topic_title   : document.title || location.href,
@@ -31,7 +31,7 @@
         }
 
         var result =
-            'http://juvia-unlogic.rhcloud.com/api/show_topic.js' +
+            'https://juvia.bytopia.org/api/show_topic.js' +
             '?_c=' + window._juviaRequestCounter +
             '&' + makeQueryString(options);
         window._juviaRequestCounter++;

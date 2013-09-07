@@ -88,14 +88,11 @@
                             (name tag-kw)] " "))
                [:li {:id "taglist"}]
                (keys (static.core/tag-map)))
-       ;; [:li {} "foobar"]
        ]]
      [:div {}
       [:h2 {:class "title"} "Subscribe"]
       [:ul {}
-       [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS feed"]]]]
-     ]]]
-
+       [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS feed"]]]]]]]
   [:div {:id "footer"}
    [:div {:id "footerbox"}
     ;; [:a {:href "/rss-feed"} " RSS Feed"]
