@@ -1,0 +1,113 @@
+#+title: The Big Migration (my new Web setup)
+#+tags: clojure programming
+#+OPTIONS: toc:nil author:nil
+
+#+begin_html
+<p><img class="entry-img-right" width="300"
+src="/images/post/digitalocean-logo.png" alt="DigitalOcean logo"/></p>
+#+end_html
+
+Although [[https://www.openshift.com/][OpenShift]] is a great service and fit all my needs completely,
+I decided to move on. There were several reasons for that. First of
+all, I wanted to have a more independent setup, bringing closer the
+day when I can run my own server reliably. OS being an IAAS applies
+certain restrictions on what you can and cannot do. Secondly, I hit
+the limit of three cartridges provided by free, and while it was just
+the amount I required, it prohibited me from doing any casual testing
+and web-doodling from that account. And when the money becomes
+involved, you apply a more careful judgment to where you wanna be.
+
+So farewell Openshift, greetings [[https://www.digitalocean.com/][DigitalOcean]]. I picked DO mostly for,
+I won't conceal it, the price tag. $5 is the exact amount I'm willing
+to spend on a VPS so far, when there is also an option of not paying
+at all. And for these $5 DigitalOcean provides a decent single-core
+VPS with 20GB SSD storage space. This is more than enough for me right
+now, and DO offers more advanced plans for roughly the same amount of
+money as other VPS providers do. I opted for an instance in
+San-Francisco (Amsterdam was unavailable when I was creating an
+instance), and that gives me around 150 ms latency - which is
+sufficient for my use-cases.
+
+#-readmore
+
+* Initial configuration
+
+  As soon as DO gets your payment, you are eligible for creating a
+  node (nodes are called droplets here). You pick a physical location,
+  and the operating system to install on the droplet (I went for LTS
+  Ubuntu) and in half a minute your droplet is ready. Boom.
+
+  I used [[http://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers][this article]] to perform basic configuration and ensure some
+  first-minute security. DigitalOcean also offers a fair bunch of
+  [[https://www.digitalocean.com/community][tutorials]] on how to install common software on different
+  distributions, how to configure SSL in Apache and so on.
+
+  Following one of the above-mentioned tutorials, I installed
+  and configured the LAMP stack. Never dealing with Apache in my
+  life, I found it relatively easy to get it running, HTTPS
+  included. There were a few not so smooth moments because Apache
+  config layout is apparently distro-dependent, so you should search
+  for documentation for your particular distribution.
+
+  MySQL was fairly easy to get up since I already did that a couple
+  of times. I also installed Phusion Passenger (from what I've
+  understood, it's an application container for Ruby) directed by
+  another guide on the web. And that was all for the software part.
+
+  Finally, I obtained a valid and widely accepted SSL certificate from
+  [[https://www.startssl.com/][StartSSL]]. [[https://konklone.com/post/switch-to-https-now-for-free?hn][This tutorial]] explains the process step-by-step. StartSSL
+  offers free certificates for your main domain and one subdomain. It
+  seems like they also require you to verify your identity every
+  month, but I'm yet to find out.
+
+* Migrating sites and applications
+
+  Of course, the blog (which is just a statically generated website)
+  was the easiest to migrate. On the other hand, [[https://github.com/phusion/juvia][the commenting system]]
+  gave me a lot of trouble. I couldn't get the damn thing to work
+  because of the build errors, and I had to contact on of the
+  maintainers on Github to help me with that. Turned out that Ruby 1.9
+  and 2.0 compatibility has its quirks the same as Pythons do (it was
+  news for me). After I fixed versions in a few dependency lines, it
+  all went good.
+
+  Finally, I transitioned my [[http://owncloud.org/][ownCloud]] server. That perhaps was the
+  main reason to move to a VPS - I wanted to keep my data a little
+  closer, and all in one place. Now I use the 20GB I was provided with
+  to store my photos, books and random files I move across devices. I
+  also tried to store music (ownCloud has a web audio player and even
+  a [[https://en.wikipedia.org/wiki/Ampache][Ampache]] server to stream music), but at that point ownCloud upload
+  speed was just terrible (and I wasn't able to make ownCloud
+  recognize the files I manually copied via _scp_), so I gave up on
+  that idea. I hope it is fixed by now, though I haven't tried since.
+
+  Besides data, ownCloud also keeps my contacts and calendars. I had
+  to spend a couple of bucks on [[https://play.google.com/store/apps/details?id=org.dmfs.caldav.lib][CalDAV]] and [[https://play.google.com/store/apps/details?id=org.dmfs.carddav.sync][CardDAV]] clients for Android
+  (which is such a shame, even iPhones have native Cal/CardDAV
+  support), but it pretty much worth it. Now I don't rely on Google
+  for managing that information, but it is still nicely synchronized
+  between all my devices (and the Web interface for them is also
+  rather good).
+
+  By the way, ownCloud is modular, so all kinds of plugins for it are
+  written and being written to meet the needs of every user. Its
+  community also greatly benefited from the recent PRISM scandal. Thus
+  If you write in PHP and are worried about your data safety, you can
+  join the cause.
+
+* Blog updates
+
+  It is apparent that I spend more time tweaking the blog than
+  actually writing, but I really can't help it. This time I worked on
+  the sidebar and added a pair of widgets there (Web 1.0 galore). You
+  can see them on the index page. The first one is a Goodreads widgets
+  that shows the latest books I've finished reading. The second is a
+  Jamendo widget which allows you to listen to the music I discovered
+  recently. Give it a try, it is free as in freedom.
+
+  Currently I'm also trying to replace the Google Analytics suite
+  with a personally hosted software called [[http://piwik.org/][Piwik]]. That will be
+  another step in stripping the vendor-locked parts in my setup.
+
+  To summarize it all, join us now and share the software! You'll be
+  free, hackers, if you decide to.
