@@ -1,7 +1,7 @@
 {:title "Archives"}
 
 [:ul {:class "posts"}
- (->> (list-files :posts)      
+ (->> (static.io/list-files :posts)
       (reduce (fn [h v]
                 (let  [date (re-find #"\d*-\d*" (FilenameUtils/getBaseName (str v)))]
                   (if (nil? (h date))
@@ -17,5 +17,5 @@
                  (map #(let [f %
                              url (static.core/post-url f)
                              [metadata _] (static.io/read-doc f)]
-                         [:li [:a {:href url} (:title metadata)]]) 
+                         [:li [:a {:href url} (:title metadata)]])
                       posts)]]))))]

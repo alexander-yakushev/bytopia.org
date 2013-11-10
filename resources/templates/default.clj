@@ -8,6 +8,8 @@
   [:link {:rel "icon", :href "/images/favicon.ico" :type "image/x-icon"}]
   [:link {:rel "shortcut icon",:href "/images/favicon.ico" :type "image/x-icon"}]
   [:link {:rel "stylesheet", :type "text/css", :href "/default.css"}]
+  (when (= (:title metadata) "Home")
+    [:link {:rel "stylesheet", :type "text/css", :href "/goodreads.css"}])
   [:link
    {:rel "alternate", :type "application/rss+xml",
     :title (:site-title (static.config/config)), :href "/rss-feed"}]
@@ -89,13 +91,33 @@
                [:li {:id "taglist"}]
                (keys (static.core/tag-map)))
        ]]
-     [:div {}
-      [:h2 {:class "title"} "Subscribe"]
-      [:ul {}
-       [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS feed"]]]]]]]
+     [:div {:id "links"}
+      [:h2 {:class "title"} "Links"]
+      [:div {:id "links-left"}
+       [:ul {}
+        [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS Feed"]]
+        [:li {} [:a {:id "github" :href "https://github.com/alexander-yakushev"} "Github"]]
+        [:li {} [:a {:id "gplus" :href "https://plus.google.com/u/0/107472102450770404696"} "Google+"]]]]
+      [:div {:id "links-right"}
+       [:ul {}
+        [:li {} [:a {:id "linkedin" :href "https://www.linkedin.com/profile/view?id=82917611"} "LinkedIn"]]
+        [:li {} [:a {:id "goodreads" :href "https://www.goodreads.com/user/show/5694609-alexander-yakushev"} "Goodreads"]]
+        [:li {} [:a {:id "lastfm" :href "https://www.last.fm/user/Unlog1c"} "Last.fm"]]]]
+      [:div {:class "clear"}]]
+     (when (= (:title metadata) "Home")
+       [:div {:id "widgets"}
+        [:div {:id "goodreads"}
+         [:script {:type "text/javascript", :charset "utf-8"
+                   :src "https://www.goodreads.com/review/custom_widget/5694609.Recent%20books?cover_position=left&cover_size=small&num_books=5&order=d&shelf=read&show_author=1&show_cover=1&show_rating=0&show_review=0&show_tags=1&show_title=1&sort=date_read&widget_bg_color=FFFFFF&widget_bg_transparent=&widget_border_width=1&widget_id=13821383570&widget_text_color=000000&widget_title_size=medium&widget_width=medium"}]]
+        [:div {:class "clear"}]
+        [:h2 {:class "title"} "Featured tracks"]
+        [:div {:style "margin: 10px;"}
+         [:iframe {:id "widget", :scrolling "no", :frameborder 0, :width 293, :height 470,
+                   :style "width: 293px; height: 470px;"
+                   :src "//widgets.jamendo.com/v3/playlist/89122293?autoplay=0&layout=cover&manualWidth=293&width=293&theme=light&highlight=7&tracklist=true&tracklist_n=3&embedCode="}]]])
+     ]]]
   [:div {:id "footer"}
    [:div {:id "footerbox"}
-    ;; [:a {:href "/rss-feed"} " RSS Feed"]
     [:div {:class "support"}
      "&copy; " (static.core/blog-timespan) " Alexander Yakushev"
      [:p ;; {:class "support"}

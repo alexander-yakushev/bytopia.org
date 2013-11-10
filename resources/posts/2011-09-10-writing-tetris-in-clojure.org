@@ -56,7 +56,7 @@ anymore, so please consider using mature Clojure GUI frameworks like
 
 Now open *src/tetris/core.clj* file and start with this snippet:
 
-#+begin_src clojure
+#+begin_src clojure +n
 (ns tetris.core
   (:import (java.awt Color Dimension BorderLayout)
     (javax.swing JPanel JFrame JOptionPane JButton JLabel)
@@ -70,7 +70,7 @@ Now open *src/tetris/core.clj* file and start with this snippet:
 
 We have just declared what we are going to use in our Tetris implementation.
 
-#+begin_src clojure
+#+begin_src clojure +n
 (def empty-cell 0)
 (def moving-cell 1)
 (def filled-cell 2)

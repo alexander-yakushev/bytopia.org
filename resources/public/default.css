@@ -8,11 +8,12 @@ select, input, button, textarea {
 table {
     font-size:inherit;
 }
-pre, code, kbd, samp, tt {
+pre, kbd, samp, tt {
     font-family:monospace;
     font-size:108%;
     line-height:100%;
 }
+
 /*Global layouts*/
 body {
     margin:0;
@@ -38,32 +39,27 @@ h1, h2, h3, h4, h5, h6 {
     text-align: right;
     padding: 0 20px 0 20px;
     margin-top: 40px;
-    border-top-width: 1px;
-    border-top-style: solid;
     background: #dedede;
     margin-top: 40px;
-    border-top-color: #bbbbb6;
+    border-top: 1px solid #bbbbb6;
 }
 #main {
     width: 647px;
     float: left;
     padding: 0 15px 20px 20px;
-    border-right-width: 1px;
-    border-right-style: solid;
-    border-top-width: 1px;
-    border-top-style: solid;
+    border-right: 1px solid #ddddd5;
+    border-top: 1px solid #bbbbb5;
+    background-color: #fff;
 }
 #sidebar {
     width: 313px;
     float: left;
     clear: right;
-    border-top-width: 1px;
-    border-top-style:solid;
-    border-left-width: 1px;
-    border-left-style:solid;
-    border-right-width: 1px;
-    border-right-style:solid;
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-right: 1px solid;
 }
+
 a {
     text-decoration:none;
 }
@@ -99,14 +95,14 @@ pre {
 }
 code{
     background-color: #f8f8f8;
-    border-width:1px;
-    border-style:solid;
+    border: 1px solid #eaeaea;
     border-radius: 3px 3px 3px 3px;
-    border-color: #eaeaea;
     margin: 0 2px;
     padding:0 5px;
     overflow: auto;
-    font: Droid Sans Mono;
+    font-family: Droid Sans Mono;
+    color: #100;
+    background:#f9f9f9;
 }
 em {
     font-weight: bold;
@@ -129,8 +125,7 @@ ol li{
 }
 .site-name a{
     padding:10px 20px 10px 0;
-    border-right-width:1px;
-    border-right-style:solid;
+    border-right: 1px solid;
 }
 .site-name .logo_img{
     padding:20px 0 0 0;
@@ -150,8 +145,7 @@ ol li{
 
 /*global Navi*/
 #outbox{
-    border-width:1px;
-    border-style:solid;
+    border: 1px solid;
     overflow: hidden;
     border-radius:4px 4px 0 0;
 }
@@ -229,8 +223,7 @@ ol li{
     margin-right:10px;
 }
 #searchform div{
-    border-width: 1px;
-    border-style:solid;
+    border: 1px solid;
 }
 #main #searchform div{
     border:none
@@ -274,13 +267,11 @@ ol li{
     margin:40px 0 0 0;
 }
 .home .thumb{
-    border-width: 5px;
-    border-style:solid;
+    border: 5px solid;
     float:left
 }
 .thumb a{
-    border-width: 1px;
-    border-style:solid;
+    border: 1px solid;
     padding:1px;
     display: block;
 }
@@ -312,9 +303,7 @@ h1.entry-title{
 }
 input, textarea {
     padding: 0.2em;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #ccc;
+    border: 1px solid #ccc;
     background-color: #fff;
 }
 textarea {
@@ -336,8 +325,7 @@ textarea {
     margin-bottom:0;
     font-size:104%;
     display:block;
-    border-bottom-width:5px;
-    border-bottom-style:solid;
+    border-bottom: 5px solid;
 }
 
 #sidebar ul li{
@@ -345,8 +333,7 @@ textarea {
     /* list-style:inside; */
     padding-left:15px;
     padding-right:10px;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
+    border-bottom: 1px solid;
 }
 
 #recent-posts li{
@@ -387,10 +374,6 @@ textarea {
     padding:5px;
     text-decoration: none;
 }
-/*IE6*/
-#main {
-    overflow: hidden;
-}
 /* Clearfix*/
 .clear{
     clear: both;
@@ -427,19 +410,14 @@ body {
     box-shadow: #CCC 0px 5px 10px;
     background:#f1f1f1;
 }
-
-#main {
-    border-right-color: #DDDDD5;
-    border-top-color: #bbbbb5;
-    background-color:#FFF;
-}
 #sidebar {
     border-top-color: #bbbbb5;
     border-left-color: #fff;
     border-right-color: #fff;
 }
 a {
-    color:#38826f;
+    color:#76b2c4;
+    /* color:#38826f; */
 }
 a:hover{
     color:#a64760;
@@ -465,11 +443,6 @@ a:hover{
 code::-moz-selection {background:#B81D34;color:#fff;}
 code::selection {background:#B81D34;color:#fff;}
 
-code{
-    color: #100;
-    background:#f9f9f9;
-    border-color: 1px solid silver;
-}
 table {
     background-color: #fff;
 }
@@ -639,9 +612,7 @@ table td{
     color:#bbb;
 }
 
-/* Newer | Older */
 /*Comments*/
-/*Comment form*/
 #submit{
     color: #fff;
     background: #666;
@@ -654,6 +625,7 @@ input:hover,
 textarea:hover {
     border-color: #999;
 }
+
 /*sidebar*/
 #sidebar a{
     color:#767575;
@@ -704,22 +676,55 @@ ul.posts li span {
     font-size: small;
 }
 
-#rss-feed {
-    background: url("/images/rss.png") no-repeat scroll 0px 4px transparent;
-    padding-left: 22px;
-    padding-top: 2px;
-    /* padding: 0px 0px 0px 0px; */
-    float: left;
-    /* text-decoration: none; */
-    display: block;
-    height: 26px;
-    /* line-height: 25px; */
+#links ul li {
+    /* border-bottom-style: none; */
 }
 
-/* .juvia-preview-content { */
-/*     background-color: rgb(227, 227, 227); */
-/* } */
+#widgets {
+    /* border-top-style:solid; */
+    /* border-top-width:1px; */
+    /* border-top-color:#D1D1D1; */
+}
 
-/* #comments-separator { */
-/*     border-bottom: 1px solid rgb(204, 204, 204); */
-/* } */
+#links a {
+    float: left;
+    padding-left: 25px;
+    padding-top: 2px;
+    display: block;
+    height: 26px;
+    background-size: 18px 18px;
+}
+
+#links-left {
+    float: left;
+    width: 50%;
+}
+
+#links-right {
+    float: right;
+    width: 50%;
+}
+
+#rss-feed {
+    background: url("/images/rss.png") no-repeat scroll 0px 3px transparent;
+}
+
+#linkedin {
+    background: url("/images/linkedin.png") no-repeat scroll 0px 3px transparent;
+}
+
+#github {
+    background: url("/images/github.png") no-repeat scroll 0px 3px transparent;
+}
+
+#gplus {
+    background: url("/images/gplus.png") no-repeat scroll 0px 3px transparent;
+}
+
+#goodreads {
+    background: url("/images/goodreads.png") no-repeat scroll 0px 3px transparent;
+}
+
+#lastfm {
+    background: url("/images/last_fm.png") no-repeat scroll 0px 3px transparent;
+}

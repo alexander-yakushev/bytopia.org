@@ -33,9 +33,11 @@ straightforward. Here it is step by step:
 - add William's repo to your pacman.conf as described in README;
 - install *linux-mainline* package;
 - update grub to include the new kernel in the list;
-#+begin_src shell
+
+#+begin_src shell-script
 grub-mkconfig -o /boot/grub/grub.cfg
 #+end_src
+
 - rebuild *tlp* and *tp_smapi-mainline* packages from AUR.
 
 Now you can safely update all other packages that you otherwise
