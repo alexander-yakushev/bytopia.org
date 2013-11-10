@@ -31,7 +31,7 @@
         }
 
         var result =
-            'https://juvia.bytopia.org/api/show_topic.js' +
+            'http://juvia.bytopia.org/api/show_topic.js' +
             '?_c=' + window._juviaRequestCounter +
             '&' + makeQueryString(options);
         window._juviaRequestCounter++;
