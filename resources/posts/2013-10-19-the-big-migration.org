@@ -1,5 +1,5 @@
 #+title: The Big Migration (my new Web setup)
-#+tags: clojure programming
+#+tags: digitalocean owncloud
 #+OPTIONS: toc:nil author:nil
 
 #+begin_html

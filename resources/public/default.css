@@ -244,7 +244,7 @@ ol li{
 }
 #navigation #searchform input#s{
     float:left;
-    height: 25px;
+    height: 18px;
     padding: 3px 10px;
     width: 160px;
 }
@@ -308,6 +308,10 @@ input, textarea {
 }
 textarea {
     padding: 0.5em 10px;
+}
+
+.juvia-textarea-field textarea {
+    width: 96% !important;
 }
 
 /*sidebar*/

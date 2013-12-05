@@ -1,6 +1,6 @@
 [:site-title "Bytopia.org"
  :site-description "Inventing, implementing, living a life."
- :site-url "http://bytopia.org"
+ :site-url "http://www.bytopia.org"
  :site-author "Alexander Yakushev"
  :date-created 2012
  :in-dir "resources/"
@@ -9,6 +9,7 @@
  :encoding "UTF-8"
  :blog-as-index false
  :create-archives false
+ :create-tags false
 
  :rsync "rsync"
  :host "openshift"
