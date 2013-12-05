@@ -1,0 +1,112 @@
+#+title: Emacs saves the day - again
+#+tags: emacs programming
+#+OPTIONS: toc:nil author:nil
+
+For many of us Emacs is more than just a text editor. It is a
+programming environment, text processor, file manager, image viewer,
+organizer - you name it. But what's most enthralling about Emacs is
+the simplicity of ad-hoc repurposing it to the specific task. In this
+take I describe my recent application of Emacs to conveniently label
+large amount of images.
+
+* The task
+
+Recently I was playing with text recognition of grocery store
+receipts. At one point you divide a photo of a receipt into hundreds
+of small images, each containing (hopefully) one character. From
+there your classifier should recognize each image as a character. But
+before that you must train your classifier by providing it with a set
+of character images having an already established mapping to the
+characters they represent. What I decided to do is to run 4-5
+receipts through the character separation algorithm (which gave me
+around 2500 images) and then manually assign a respective character
+to each image.
+
+* The solution
+
+So the problem boils down to the following - press a correct key for
+every image; also delete images that contained unrecognizable character
+or were just artifacts. With no obvious way of automation, I at least
+wanted something that doesn't require any additional keypresses and
+body movements.
+
+What would a programmer do? Write some sort of a GUI tool that shows
+images and recognizes keypresses, saves the mapping between the two,
+preferably allows to go back and correct the mapping. What would
+Richard Stallman do? Use Emacs, of course!
+
+Emacs has this wonderful mode called [[https://raw.github.com/typester/emacs/master/lisp/iimage.el][iimage-mode]]. It gives Emacs the
+ability to display images directly in the editing window. With this
+and some custom keybindings I was able to do the exact setup I
+wanted.
+
+Here's the idea: =M-x cd= into a directory with images, insert a list
+of all images into a fresh buffer, =M-x turn-on-iimage-mode=. In the
+result your buffer should display one image in every line.
+
+/Note: If you use openwith-mode you should turn it off when entering/
+/iimage-mode, otherwise images will be open with system's default/
+/viewer instead of being displayed in the buffer./
+
+Now to the coding. Create a new minor mode to be able to redefine
+bindings for character keys:
+
+#+BEGIN_SRC emacs-lisp
+(define-minor-mode classify-image-mode
+  :lighter "Classify")
+#+END_SRC
+
+Next we define our custom insert command. All my image files started
+with an underscore symbol. I wanted them to have the respective
+character before the underscore. So this function checks if current
+character under the cursor is an underscore, and if it's not, then
+removes the character first (so that you can easily correct
+mistakes). After the pressed character is inserted, function moves
+the cursor to the beginning of the next line.
+
+#+BEGIN_SRC emacs-lisp
+(defun classify-image-insert (arg)
+  (interactive "p")
+  (when (not (= (char-after (point)) 95))
+    (delete-forward-char 1))
+  (self-insert-command arg)
+  (next-line)
+  (beginning-of-line))
+#+END_SRC
+
+Finally we set a bindings map for our newly created mode:
+
+#+BEGIN_SRC emacs-lisp
+(defvar classify-image-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap self-insert-command] 'classify-image-insert)
+    map))
+
+(define-key classify-image-mode-map (kbd "<backspace>") 'kill-whole-line)
+#+END_SRC
+
+At the end, after the long and tedious process of mapping the
+characters, we turn off *iimage-mode* and replace each line (which
+now looks like a desired filename) by the move command:
+
+#+BEGIN_SRC emacs-lisp
+M-x query-replace-regexp RET \(.\)\(.+\) RET mv \2 \1\2
+#+END_SRC
+
+Save the file as a bash script and execute it inside the directory
+with images - and the day is saved! There's one more thing to do
+though, we need to delete all the images that were not renamed. A
+simple =rm _*= will do the trick.
+
+This is how the workflow looks like:
+
+#+begin_html
+<p><center><img width="200" src="/images/post/emacs-saves.gif"
+alt="Mapping workflow"/></center></p>
+#+end_html
+
+* Improvements
+
+To avoid generating *mv* commands from desired file names we could
+directly do editing inside *wdired-mode*. Then we would have to just
+press =C-c C-c= to rename all the files.
