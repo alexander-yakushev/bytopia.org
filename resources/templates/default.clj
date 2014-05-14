@@ -1,4 +1,4 @@
-(let [config (static.config/config)
+(let [config (config)
       blog-timespan (let [created (:date-created config)
                           now (+ (.getYear (java.util.Date.)) 1900)]
                       (if (= created now)
@@ -66,7 +66,7 @@
         (if (= (:type metadata) :post)
           [:div {:class "entry-info"}
            [:span {:class "entry-date"}
-            (:date metadata)]
+            (format-date (:date metadata) "dd MMMM YYYY")]
            (reduce
             (fn[h v]
               (conj h [:a {:href (str "/tags/#" v)} v] " "))
@@ -84,9 +84,9 @@
        [:div {}
         [:h2 {:class "title"} "Recent posts"]
         [:ul {:id "recent-posts"}
-         (for [f (take 5 (reverse (static.io/list-files :posts)))
-               :let [[metadata _] (static.io/read-doc f)]]
-           [:li [:a {:href (static.core/post-url f)} (:title metadata)]])]]
+         (for [f (take 5 (reverse (io/list-files :posts)))
+               :let [[metadata _] (io/read-doc f)]]
+           [:li [:a {:href (post-url f)} (:title metadata)]])]]
        [:div {}
         [:h2 {:class "title"} "Tags"]
         [:ul {}
@@ -94,7 +94,7 @@
                    (conj div [:a {:href (str "/tags/#" (name tag-kw))}
                               (name tag-kw)] " "))
                  [:li {:id "taglist"}]
-                 (keys (static.core/tag-map)))
+                 (keys (tag-map)))
          ]]
        [:div {:id "links"}
         [:h2 {:class "title"} "Links"]
@@ -105,9 +105,9 @@
           [:li {} [:a {:id "gplus" :href "https://plus.google.com/u/0/107472102450770404696"} "Google+"]]]]
         [:div {:id "links-right"}
          [:ul {}
+          [:li {} [:a {:id "email" :href "mailto:alex@bytopia.org"} "E-mail"]]
           [:li {} [:a {:id "linkedin" :href "https://www.linkedin.com/profile/view?id=82917611"} "LinkedIn"]]
-          [:li {} [:a {:id "goodreads" :href "https://www.goodreads.com/user/show/5694609-alexander-yakushev"} "Goodreads"]]
-          [:li {} [:a {:id "lastfm" :href "https://www.last.fm/user/Unlog1c"} "Last.fm"]]]]
+          [:li {} [:a {:id "goodreads" :href "https://www.goodreads.com/user/show/5694609-alexander-yakushev"} "Goodreads"]]]]
         [:div {:class "clear"}]]
        (when (= (:title metadata) "Home")
          [:div {:id "widgets"}

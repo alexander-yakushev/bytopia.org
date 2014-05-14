@@ -2,10 +2,12 @@
 #+tags: digitalocean owncloud
 #+OPTIONS: toc:nil author:nil
 
-#+begin_html
-<p><img class="entry-img-right" width="300"
-src="/images/post/digitalocean-logo.png" alt="DigitalOcean logo"/></p>
-#+end_html
+#+begin_hiccup
+[:p [:img {:class "entry-img-right"
+           :width 300
+           :src "/images/post/digitalocean-logo.png"
+           :alt "DigitalOcean logo"}]]
+#+end_hiccup
 
 Although [[https://www.openshift.com/][OpenShift]] is a great service and fit all my needs completely,
 I decided to move on. There were several reasons for that. First of
@@ -28,7 +30,7 @@ San-Francisco (Amsterdam was unavailable when I was creating an
 instance), and that gives me around 150 ms latency - which is
 sufficient for my use-cases.
 
-#-readmore
+#+readmore
 
 * Initial configuration
 

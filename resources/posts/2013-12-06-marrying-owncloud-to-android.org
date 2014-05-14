@@ -1,0 +1,122 @@
+#+title: Marrying ownCloud to Android
+#+tags: owncloud android
+#+OPTIONS: toc:nil author:nil
+
+#+begin_hiccup
+[:p [:img {:class "entry-img-right"
+           :width 256
+           :src "/images/post/owncloud-logo.png"
+           :alt "ownCloud logo"}]]
+#+end_hiccup
+
+/This post is a follow-up to/ [[http://www.bytopia.org/2013/10/19/the-big-migration/][/The Big Migration/]].
+
+So, with moving many of Google-powered services to my personally
+hosted *ownCloud*, I've run into need of providing the necessary
+infrastructure on the device side. Since I own only Androids it was
+already easier for me to deal with a single platform, but subtleties,
+oh subtleties galore. In the post I describe the very
+ownCloud-compatible Android applications I use up-to-date and am quite
+happy with.
+
+#+readmore
+
+* Files
+
+  The primary task of /ownCloud/ is, of course, file storage and
+  sharing. /ownCloud/ implements *WebDAV* interface to serve files. This
+  means that you can use any of WebDAV applications available in
+  Google Play which are plenty. ownCloud guys have [[https://play.google.com/store/apps/details?id%3Dcom.owncloud.android][their own
+  application]] which costs $1 and doesn't do a lot, but is nice to
+  have anyway. It allows you to view your cloud directories and
+  download individual files for offline usage (similar to /Dropbox/ and
+  /Google Drive/ clients). As a pleasant bonus, it provides Instant
+  Upload feature for your photos, so if you tick the respective
+  checkbox your pics will be automatically uploaded to your cloud
+  (instead of Google+).
+
+  Because I required something more automatic, I installed [[https://play.google.com/store/apps/details?id%3Ddk.tacit.android.foldersync.lite][FolderSync
+  Lite]] to synchronize cloud folders with those on the devices. It
+  operates the same as desktop /ownCloud/ client - you specify folders
+  you want to synchronize and respective local directories, sync
+  interval, overwrite policies etc etc; and it will download/upload
+  files in these folders according to the rules. There is also a paid
+  version of the app, but I don't really notice the limitations of the
+  free one.
+
+* Contacts
+
+  ownCloud uses *CardDAV* protocol to synchronize contacts. Shamingly
+  for Google, Android doesn't have native facilities to use CardDAV
+  (while iOS does), so we need to install third-party software for
+  this task. [[https://play.google.com/store/apps/details?id%3Dorg.dmfs.carddav.Sync][CardDAV-Sync]] is a great tool for this, it allows two-way
+  contacts synchronization and overall is pretty reliable. It costs
+  two bucks, there is a free version which is quite limiting, but I
+  didn't mind paying for the good work, especially since there were no
+  real alternatives at that point. Now it seems there are a couple of
+  similar apps but I don't know how do they compare to this one.
+
+  Unfortunately I had to ditch Google's stock *People* application and
+  default dialer for that matter. /People/ does not understand
+  CardDAV's groups and show the contacts altogether. [[https://play.google.com/store/apps/details?id%3Dcom.contapps.android][Contacts+]] turned
+  out to be a good replacement, it works with groups correctly, allows
+  to optionally show or hide contacts from separate groups, has a
+  concept of account merging (thanks to this I was able to merge
+  ownCloud contacts with some Google+ contacts so that profile photos
+  are taken from G+). Albeit /Contacts+/ feels cluttered and overblown
+  sometimes with all its social features, thus I would enjoy a simpler
+  application if I managed to find one.
+
+* Calendar
+
+  Calendar functionality in /ownCloud/ is done using... wait for
+  it... *CalDAV*. As always, we head to the Play Market and shell out
+  another three bucks for [[https://play.google.com/store/apps/details?id%3Dorg.dmfs.caldav.lib][CalDAV-Sync]]. No free version this time, and
+  other free CalDAV applications available on Play kinda suck. This
+  one does what it is supposed to do, with no real complaints. Luckily
+  this time I didn't have to install any frontend, stock *Calendar*
+  suffices completely.
+
+  A small hack I had to employ on the server side because /ownCloud/
+  does not support iCal subscriptions. The solution is vividly
+  described [[http://forum.owncloud.org/viewtopic.php?f%3D8&t%3D11576][here]]. Basically you have to set up a cron job that fetches
+  calendar entries from the link and pushes them to /ownCloud/ via CLI
+  WebDAV client *cadaver*.
+
+* Notes
+
+  [[http://orgmode.org/][Org-mode]] is my best friend forever, so it was natural to employ it
+  for keeping my notes. There is a module for it called [[http://orgmode.org/manual/MobileOrg.html][org-mobile]]
+  that deals with synchronizing changes on the "server" (that is,
+  desktop computer) side. For Android you can install [[https://play.google.com/store/apps/details?id%3Dcom.matburt.mobileorg][MobileOrg]], which
+  is kind of meh when it comes to editing, but reading through notes
+  is convenient.
+
+  /MobileOrg/ has a native support for WebDAV, but I wasn't able to
+  make it work; so I just synchronize the entire Notes folder
+  using /FolderSync/, and in /MobileOrg/ I selected option "Sync using
+  my SD card".
+
+* Passwords
+
+  I use the combination of [[http://pwsafe.org][pwsafe]] + [[https://play.google.com/store/apps/details?id%3Dcom.jefftharris.passwdsafe][PasswdSafe for Android]] to keep my
+  passwords. The password database is stored in the cloud and
+  synchronized via /FolderSync/.
+
+* Music
+
+  ownCloud can store your music and play it in the browser. But what's
+  more cool is that it can stream music via [[https://github.com/ampache/ampache/][Ampache]], and then you can
+  listen to this stream using any Ampache-included music player. I
+  haven't got to using this feature just yet, as I don't want to fill
+  all my DO-provided storage with music (and it will take a while
+  too). But having a personal /Spotify/ sounds like a fun idea to me.
+
+* Final words
+
+  Managing and book-keeping all your data yourself is partly a vanity
+  endeavor. You spend a good chunk of time on stuff you otherwise
+  wouldn't do. But in the end of the day the warm fuzzy feeling of
+  having everything under your control makes it worth the struggle.
+  This, and the ability to backup all your data in a single shell
+  command. So be safe, be aware.

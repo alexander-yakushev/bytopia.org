@@ -29,10 +29,6 @@ for selling pills and reclaiming Nigerian princes' heritage,
 preferably) at [[mailto:alex@bytopia.org][alex@bytopia.org]]. Sometimes I hang around on #clojure
 channel at [[http://freenode.net/][freenode]] as /alexyakushev/.
 
-# #+BEGIN_HTML
-#   <img src="/images/nurullahAkkaya.jpeg" />
-# #+END_HTML
-
 *** The pieces of my shattered identity can also be found on:
 
  - [[http://gplus.to/alexyakushev][Google+]]

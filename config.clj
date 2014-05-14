@@ -4,7 +4,7 @@
  :site-author "Alexander Yakushev"
  :date-created 2012
  :in-dir "resources/"
- :out-dir "target/bytopia.org/"
+ :out-dir "target/www/"
  :default-template "default.clj"
  :encoding "UTF-8"
  :blog-as-index false
@@ -12,9 +12,10 @@
  :create-tags false
 
  :rsync "rsync"
- :host "openshift"
- :user ""
- :deploy-dir "~/app-root/repo/php/"
+ :host "digitalocean-bytopia"
+ :user "unlogic"
+ :deploy-dir "/home/www-data/"
+ :post-deploy-cmd ["ssh" "digitalocean-bytopia" "/home/www-data/deploy-www"]
 
  :emacs "/usr/bin/emacs"
  :emacs-eval [(add-to-list 'load-path "~/.emacs.d/elpa/clojure-mode-20130911.542/")

@@ -22,8 +22,7 @@ them on the Internet. I just want to share with some software that can
 make your migration to a console less hard and painful. So, here we
 go.
 
-#-readmore
-
+#+readmore
 
 ** Shell
 

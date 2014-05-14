@@ -12,8 +12,6 @@ very entry I would talk about different browsers available for this
 installation, from the simplest to the most functional. So, let's
 start.
 
-#-readmore
-
 /Note: most of the information here should be also relevant for VT8500 netbooks./
 
 ** Links/Elinks/Lynx

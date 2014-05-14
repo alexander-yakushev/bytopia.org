@@ -14,7 +14,7 @@ I want my articles to be stored as files rather than some database
 entries. Finally, managing your stuff personally gives you much more
 freedom in manipulating it.
 
-#-readmore
+#+readmore
 
 For now, I migrated some of the articles from my previous blog.
 Eventually I'll move them all and, of course, will write new articles

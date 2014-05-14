@@ -1,5 +1,6 @@
 #+title: Raidcall on Wine: problem with dnsapi.dll
 #+tags: linux wine
+#+nocut: true
 #+OPTIONS: toc:nil author:nil
 
 Recently I stuck with a problem that had no solution around the
@@ -14,5 +15,3 @@ is on the right). Then, after applying the changes, Raidcall finally
 started.
 
 Hope this would help somebody.
-
-#-readmore

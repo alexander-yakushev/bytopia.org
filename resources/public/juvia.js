@@ -3,7 +3,7 @@
     var clear_key = location.href.match(/(http.*\/\/)?[^\/]+\/(.+)/)[2]
     var options = {
         container     : '#comments',
-        site_key      : 'pz8xnj35e6ft21qoucct5p3vrye6onh',
+        site_key      : '3zq9rn3kmovdxptg1f5fmjd38lgt8zt',
         topic_key     : clear_key,
         topic_url     : 'bytopia.org/' + clear_key,
         topic_title   : document.title || location.href,

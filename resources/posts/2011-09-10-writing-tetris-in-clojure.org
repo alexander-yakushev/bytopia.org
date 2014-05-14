@@ -2,11 +2,11 @@
 #+tags: clojure programming
 #+OPTIONS: toc:nil author:nil
 
-#+begin_html
-<p><img class="entry-img-right" width="200"
-src="/images/post/tetris-scrshot.png" alt="Screenshot of the finished
-application"/></p>
-#+end_html
+#+begin_hiccup
+[:p [:img {:class "entry-img-right" :width 200
+           :src "/images/post/tetris-scrshot.png"
+           :alt "Screenshot of the finished application"}]]
+#+end_hiccup
 
 Good evening to everyone. Today I want to guide you step-by-step
 through the process of writing a game of Tetris in [[http://clojure.org/][Clojure]]. My goal
@@ -20,7 +20,7 @@ let’s get our hands dirty.
 
 The full listing is available [[https://gist.github.com/1207703][here]].
 
-#-readmore
+#+readmore
 
 * Briefing
 
@@ -33,6 +33,10 @@ current coordinates. The glass will contain numbers that will mean a
 state of the cell – empty (0) or stationary filled (2). The filled
 cells in the moving figure will be represented by ones (1). Why this
 distinction is crucial we will see a bit later.
+
+#+begin_hiccup
+(str "<foo>" 3 "foo" "bar" "</foo>")
+#+end_hiccup
 
 * Preparation
 

@@ -1,22 +1,28 @@
 {:title "Home"
  :skip-title true}
 
-(for [f (take 10 (reverse (static.io/list-files :posts)))
-      :let [url (static.core/post-url f)
-            [metadata content] (static.io/read-doc f)]]
-  [:div {:class "entry-preview"}
-   [:h2 {:class "entry-title"}
-    [:a {:href url} (:title metadata)]]
+(list
+ (for [f (take 10 (reverse (io/list-files :posts)))
+       :let [url (post-url f)
+             [metadata content] (io/read-doc f)]]
+   [:div {:class "entry-preview"}
+    [:h2 {:class "entry-title"}
+     [:a {:href url} (:title metadata)]]
 
-   [:div {:class "entry-info"}
-    [:span {:class "entry-date"} (:date metadata)]
-    (apply conj [:span {:class "entry-tags"} "Tags: "]
-           (interpose " "
-            (for [tag (.split (:tags metadata) " ")]
-              [:a {:href (str "/tags/#" tag)} tag])))
-    [:div {:class "clear"}]]
+    [:div {:class "entry-info"}
+     [:span {:class "entry-date"} (format-date (:date metadata) "dd MMMM YYYY")]
+     (apply conj [:span {:class "entry-tags"} "Tags: "]
+            (interpose " "
+                       (for [tag (.split (:tags metadata) " ")]
+                         [:a {:href (str "/tags/#" tag)} tag])))
+     [:div {:class "clear"}]]
 
-   [:div {:class "entry-content"}
-      (if (:synopsis metadata) (first @(:synopsis metadata)) @content)
-    [:p {:class "readmore"}
-     [:a {:href url} "Read more ->>"]]]])
+    [:div {:class "entry-content"}
+     ;; metadata
+     (if (:synopsis metadata)
+       (list (:synopsis metadata)
+             [:p {:class "readmore"}
+              [:a {:href url} "Read more ->>"]])
+       content)]])
+
+ [:p "For more posts see the " [:a {:href "/archives.html"} "Archives"] " page."])
