@@ -34,11 +34,11 @@ straightforward. Here it is step by step:
 - install *linux-mainline* package;
 - update grub to include the new kernel in the list;
 
-#+begin_src shell-script
+#+begin_src sh
 grub-mkconfig -o /boot/grub/grub.cfg
 #+end_src
 
-- rebuild *tlp* and *tp_smapi-mainline* packages from AUR.
+- rebuild *tlp* and *tp\_smapi-mainline* packages from AUR.
 
 Now you can safely update all other packages that you otherwise
 postponed because of the kernel rollback.

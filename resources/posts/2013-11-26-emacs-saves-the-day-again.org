@@ -51,7 +51,7 @@ result your buffer should display one image in every line.
 Now to the coding. Create a new minor mode to be able to redefine
 bindings for character keys:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC scheme
 (define-minor-mode classify-image-mode
   :lighter "Classify")
 #+END_SRC
@@ -64,7 +64,7 @@ removes the character first (so that you can easily correct
 mistakes). After the pressed character is inserted, function moves
 the cursor to the beginning of the next line.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC scheme
 (defun classify-image-insert (arg)
   (interactive "p")
   (when (not (= (char-after (point)) 95))
@@ -76,7 +76,7 @@ the cursor to the beginning of the next line.
 
 Finally we set a bindings map for our newly created mode:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC scheme
 (defvar classify-image-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap self-insert-command] 'classify-image-insert)
@@ -89,7 +89,7 @@ At the end, after the long and tedious process of mapping the
 characters, we turn off *iimage-mode* and replace each line (which
 now looks like a desired filename) by the move command:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC scheme
 M-x query-replace-regexp RET \(.\)\(.+\) RET mv \2 \1\2
 #+END_SRC
 

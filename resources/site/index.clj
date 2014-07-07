@@ -13,7 +13,7 @@
      [:span {:class "entry-date"} (format-date (:date metadata) "dd MMMM YYYY")]
      (apply conj [:span {:class "entry-tags"} "Tags: "]
             (interpose " "
-                       (for [tag (.split (:tags metadata) " ")]
+                       (for [tag (:tags metadata)]
                          [:a {:href (str "/tags/#" tag)} tag])))
      [:div {:class "clear"}]]
 

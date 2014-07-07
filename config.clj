@@ -10,6 +10,7 @@
  :blog-as-index false
  :create-archives false
  :create-tags false
+ :rss-for-tags ["clojure"]
 
  :rsync "rsync"
  :host "digitalocean-bytopia"

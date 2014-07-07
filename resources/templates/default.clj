@@ -9,11 +9,12 @@
    [:head
     [:meta {:http-equiv "content-type", :content "text/html; charset=UTF-8"}]
     [:meta {:name "description", :content (:description metadata)}]
-    [:meta {:name "keywords", :content (:tags metadata)}]
+    [:meta {:name "keywords", :content (apply str (interpose "," (:tags metadata)))}]
     [:meta {:name "author", :content (:site-author config)}]
     [:link {:rel "icon", :href "/images/favicon.ico" :type "image/x-icon"}]
     [:link {:rel "shortcut icon",:href "/images/favicon.ico" :type "image/x-icon"}]
     [:link {:rel "stylesheet", :type "text/css", :href "/default.css"}]
+    [:link {:rel "stylesheet", :type "text/css", :href "/tomorrow_night.css"}]
     (when (= (:title metadata) "Home")
       [:link {:rel "stylesheet", :type "text/css", :href "/goodreads.css"}])
     [:link
@@ -71,7 +72,7 @@
             (fn[h v]
               (conj h [:a {:href (str "/tags/#" v)} v] " "))
             [:span {:class "entry-tags"} "Tags: "]
-            (.split (:tags metadata) " "))
+            (:tags metadata))
            [:div {:class "clear"}]])
 
         content
@@ -126,7 +127,7 @@
       [:div {:class "support"}
        "&copy; " blog-timespan " Alexander Yakushev"
        [:p ;; {:class "support"}
-        "Powered by " [:a {:href "http://nakkaya.com/static.html"} "Static"]
+        "Powered by " [:a {:href "https://github.com/alexander-yakushev/discharge"} "Discharge"]
         " | Theme " [:a {:href "http://axiu.me"} "mxs"]]]]]
 
     "<!-- Piwik -->
