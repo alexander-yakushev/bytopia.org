@@ -27,14 +27,14 @@
     [:title (str (:title metadata) " - " (:site-title config))]]
    [:body
     [:div {:id "header"}
-     [:h1 {:class "site-name"}
+     [:h1.site-name
       [:a {:href "/"} "Bytopia"]]
-     [:p {:class "site-description"} (:site-description config)]]
-    [:div {:class "clear"}]
-    [:div {:id "content"}
-     [:div {:id "outbox"}
-      [:div {:id "navigation"}
-       [:div {:id "pages"}
+     [:p.site-description (:site-description config)]]
+    [:div.clear]
+    [:div#content
+     [:div#outbox
+      [:div#navigation
+       [:div#pages
         (let [make-link (fn [link-name & {:keys [link title]
                                          :or {link (str "/" (.toLowerCase link-name) ".html")
                                               title link-name}}]
@@ -48,83 +48,83 @@
            (make-link "Projects")
            (make-link "Tags" :link "/tags/")
            (make-link "Archives")])
-        [:div {:class "clear"}]]
-       [:form {:action "http://www.google.com/search",
-               :id "searchform", :method "get"}
+        [:div.clear]]
+       [:form#searchform {:action "http://www.google.com/search",
+                          :method "get"}
         [:div
-         [:label {:class "screen-reader-text", :for "s"} "Search for:"]
-         [:input {:id "s", :name "q", :value "", :type "text"}]
+         [:label.screen-reader-text {:for "s"} "Search for:"]
+         [:input#s {:name "q", :value "", :type "text"}]
          [:input {:type "hidden" :name "sitesearch", :value "www.bytopia.org"}]
-         [:input {:id "searchsubmit", :value "Search", :type "submit"}]]]]
-      [:div {:class "clear"}]
-      [:div {:id "main"}
-       [:div {:class "post"}
+         [:input#searchsubmit {:value "Search", :type "submit"}]]]]
+      [:div.clear]
+      [:div#main
+       [:div.post
         (if (and (or (= (:type metadata) :post)
                      (= (:type metadata) :site))
                  (not (:skip-title metadata)))
-          [:h2 {:class "entry-title"} (:title metadata)])
+          [:h2.entry-title (:title metadata)])
 
         (if (= (:type metadata) :post)
-          [:div {:class "entry-info"}
-           [:span {:class "entry-date"}
+          [:div.entry-info
+           [:span.entry-date
             (format-date (:date metadata) "dd MMMM YYYY")]
            (reduce
             (fn[h v]
               (conj h [:a {:href (str "/tags/#" v)} v] " "))
-            [:span {:class "entry-tags"} "Tags: "]
+            [:span.entry-tags "Tags: "]
             (:tags metadata))
-           [:div {:class "clear"}]])
+           [:div.clear]])
 
         content
 
         (when (= (:type metadata) :post)
-          [:div {:id "comments"}
+          [:div#comments
            [:script {:src "/juvia.js", :type "text/javascript"}]])]]
 
-      [:div {:id "sidebar"}
-       [:div {}
-        [:h2 {:class "title"} "Recent posts"]
-        [:ul {:id "recent-posts"}
+      [:div#sidebar
+       [:div
+        [:h2.title "Recent posts"]
+        [:ul#recent-posts
          (for [f (take 5 (reverse (io/list-files :posts)))
                :let [[metadata _] (io/read-doc f)]]
            [:li [:a {:href (post-url f)} (:title metadata)]])]]
-       [:div {}
-        [:h2 {:class "title"} "Tags"]
+       [:div
+        [:h2.title "Tags"]
         [:ul {}
          (reduce (fn [div tag-kw]
                    (conj div [:a {:href (str "/tags/#" (name tag-kw))}
                               (name tag-kw)] " "))
-                 [:li {:id "taglist"}]
+                 [:li#taglist]
                  (keys (tag-map)))
          ]]
-       [:div {:id "links"}
-        [:h2 {:class "title"} "Links"]
-        [:div {:id "links-left"}
-         [:ul {}
-          [:li {} [:a {:id "rss-feed" :href "/rss-feed"} "RSS Feed"]]
-          [:li {} [:a {:id "github" :href "https://github.com/alexander-yakushev"} "Github"]]
-          [:li {} [:a {:id "gplus" :href "https://plus.google.com/u/0/107472102450770404696"} "Google+"]]]]
-        [:div {:id "links-right"}
-         [:ul {}
-          [:li {} [:a {:id "email" :href "mailto:alex@bytopia.org"} "E-mail"]]
-          [:li {} [:a {:id "linkedin" :href "https://www.linkedin.com/profile/view?id=82917611"} "LinkedIn"]]
-          [:li {} [:a {:id "goodreads" :href "https://www.goodreads.com/user/show/5694609-alexander-yakushev"} "Goodreads"]]]]
-        [:div {:class "clear"}]]
+       [:div#links
+        [:h2.title "Links"]
+        [:div#links-left
+         [:ul
+          [:li [:a#rss-feed {:href "/rss-feed"} "RSS Feed"]]
+          [:li [:a#github {:href "https://github.com/alexander-yakushev"} "Github"]]
+          [:li [:a#gplus {:href "https://plus.google.com/u/0/107472102450770404696"} "Google+"]]]]
+        [:div#links-right
+         [:ul
+          [:li [:a#email {:href "mailto:alex@bytopia.org"} "E-mail"]]
+          [:li [:a#linkedin {:href "https://www.linkedin.com/profile/view?id=82917611"} "LinkedIn"]]
+          [:li [:a#goodreads {:href "https://www.goodreads.com/user/show/5694609-alexander-yakushev"} "Goodreads"]]]]
+        [:div.clear]]
        (when (= (:title metadata) "Home")
-         [:div {:id "widgets"}
-          [:div {:id "goodreads"}
+         [:div#widgets
+          [:div#goodreads
            [:script {:type "text/javascript", :charset "utf-8"
                      :src "https://www.goodreads.com/review/custom_widget/5694609.Recent%20books?cover_position=left&cover_size=small&num_books=5&order=d&shelf=read&show_author=1&show_cover=1&show_rating=0&show_review=0&show_tags=1&show_title=1&sort=date_read&widget_bg_color=FFFFFF&widget_bg_transparent=&widget_border_width=1&widget_id=13821383570&widget_text_color=000000&widget_title_size=medium&widget_width=medium"}]]
-          [:div {:class "clear"}]
-          [:h2 {:class "title"} "Featured tracks"]
+          [:div.clear]
+          [:h2.title "Featured tracks"]
           [:div {:style "margin: 10px;"}
            [:iframe {:id "widget", :scrolling "no", :frameborder 0, :width 293, :height 470,
                      :style "width: 293px; height: 470px;"
                      :src "//widgets.jamendo.com/v3/playlist/89122293?autoplay=0&layout=cover&manualWidth=293&width=293&theme=light&highlight=7&tracklist=true&tracklist_n=3&embedCode="}]]])
        ]]]
-    [:div {:id "footer"}
-     [:div {:id "footerbox"}
-      [:div {:class "support"}
+    [:div#footer
+     [:div#footerbox
+      [:div.support
        "&copy; " blog-timespan " Alexander Yakushev"
        [:p ;; {:class "support"}
         "Powered by " [:a {:href "https://github.com/alexander-yakushev/discharge"} "Discharge"]
