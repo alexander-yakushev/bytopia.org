@@ -1,0 +1,173 @@
+#+title: Inline functions in Clojure
+#+tags: clojure
+#+OPTIONS: toc:nil author:nil
+
+/EDIT: In the comment section Alex Miller advised against using inline/
+/functions for now as they are subject to change in the future version of/
+/Clojure./
+
+Clojure's inline functions is one of the rarely discovered features. Unlike any
+other concept that you can introduce via macros they are important enough to be
+treated specially by the compiler. But still many Clojure users have never heard
+about inlines let alone used them.
+
+In this post I investigate what is an inline function, how is it different from
+macros and when either should be used.
+
+NB: This post is a rewrite of [[http://notebook.bytopia.org/view.html?source%3Dlocal&id%3Dclojure-inlines][this Gorilla session]] (you should definitely check
+[[http://gorilla-repl.org/][Gorilla REPL]] out, it's awesome).
+
+#+readmore
+
+** Introduction to inlines
+
+   Let's see what Clojure says about inline functions.
+
+#+BEGIN_SRC clojure
+=> (doc definline)
+
+-------------------------
+clojure.core/definline
+([name & decl])
+Macro
+  Experimental - like defmacro, except defines a named function whose
+  body is the expansion, calls to which may be expanded inline as if
+  it were a macro. Cannot be used with variadic (&) args.
+#+END_SRC
+
+   OK, that is a start. Inline function is like a macro, but it is a function.
+   We can try both out on a simple example - a debugging function that takes any
+   value (or a symbol, or a form) and returns it as well as printing the result.
+
+#+BEGIN_SRC clojure
+(defmacro debug-macro [x]
+  `(do
+     (println '~x "=" ~x)
+     ~x))
+
+=> (debug-macro (+ 1 2))
+
+stdout: Value of (+ 1 2) : 3
+3
+#+END_SRC
+
+   And with inlines:
+
+#+BEGIN_SRC clojure
+(definline debug-fn [x]
+  `(do
+     (println '~x "=" ~x)
+     ~x))
+
+=> (debug-fn (+ 1 2))
+
+stdout: Value of (+ 1 2) : 3
+3
+#+END_SRC
+
+   So far we see no differences between macros and inlines. Both take arguments by
+   name rather than by value, and return arbitrary form that is then executed.
+
+** Going deeper
+
+   Macros are expanded as soon as they are spotted by the compiler, and they can
+   arbitrarily modify the enclosed forms. When you pass some function calls to the
+   macro you have no gurantee that they will be executed. Let's take this example:
+
+#+BEGIN_SRC clojure
+(defn bar [x y]
+  (* x y))
+
+=> (bar 4 6)
+24
+
+(defmacro foo [arg]
+  `(+ ~@(rest arg)))
+
+=> (foo (bar 4 6))
+10
+#+END_SRC
+
+   In the example function =bar= multiplies two numbers, and macro =foo= returns a
+   form that sums all but first elements in the list you pass to it. Hence, in the
+   second test =bar= is never executed as =foo= just takes second and third
+   element from the list and adds them.
+
+   But what if we try to do the same with an inline?
+
+#+BEGIN_SRC clojure
+(definline foo-fn [arg]
+  `(+ ~@(rest arg)))
+
+IllegalArgumentException Don't know how to create ISeq from:
+clojure.lang.Symbol clojure.lang.RT.seqFrom (RT.java:505)
+#+END_SRC
+
+   Oops! Let's try another way:
+
+#+BEGIN_SRC clojure
+(defn foo-fn
+  {:inline (fn [arg] `(+ ~@(rest arg)))}
+  [arg]
+  :whatever)
+
+=> (foo-fn (bar 4 6))
+10
+#+END_SRC
+
+   And it works! What we did is we created a function with =:inline= metadata. It
+   doesn't matter what the function itself returns because when it is called
+   directly, the inline version is used. In this case, we achieved the same
+   behavior as with macros.
+
+** So, what's the point?
+
+   It appears that the only significant difference between macros and inline
+   functions is that the latter do not support variadic arguments. Then why
+   would you need the language to have both? To find out the answers we can
+   check how Clojure itself uses inline functions by taking a look at one of
+   them:
+
+#+BEGIN_SRC clojure
+(defn pos?
+  "Returns true if num is greater than zero, else false"
+  {:inline (fn [x] `(. clojure.lang.Numbers (isPos ~x)))
+   :added "1.0"}
+  [x] (. clojure.lang.Numbers (isPos x)))
+#+END_SRC
+
+   This function has both the function body and the inline part, but why? You'll
+   understand immediately if you see the bytecode generated for this code:
+
+#+BEGIN_SRC clojure
+(pos? 6)
+
+(map pos? [1 -3 8])
+#+END_SRC
+
+   Below is the relevant part of the decompiled class:
+
+#+BEGIN_SRC java
+Numbers.isPos(6L) ? Boolean.TRUE : Boolean.FALSE;
+((IFn)const__5.getRawRoot()).invoke(const__3.getRawRoot(), const__9);
+...
+const__3 = (Var)RT.var("clojure.core", "pos?");
+const__5 = (Var)RT.var("clojure.core", "map");
+const__9 = (AFn)RT.vector(new Object[] {
+            Long.valueOf(1L), Long.valueOf(-3L), Long.valueOf(8L) });
+#+END_SRC
+
+   Now it is clear. When direct call occurs, the compiler inlines the call, but if
+   the function is passed as an argument and later used, function is evaluated
+   normally.
+
+** Conclusion
+
+   From what we've seen today, inline functions and macros are very much
+   similar. This doesn't mean that you should start using inlines in place of
+   macros. Actually it is a bad idea to write an inline function that changes
+   the computation flow like a macro (because noone expects such thing from a
+   function). But if you feel that you can increase your performance with some
+   compile-time precomputation/unrolling and you don't want to sacrifice the
+   ability to pass the function around as a first-class object --- then inline
+   functions can be an excellent tool for that.

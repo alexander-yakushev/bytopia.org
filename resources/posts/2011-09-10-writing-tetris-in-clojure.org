@@ -34,10 +34,6 @@ state of the cell – empty (0) or stationary filled (2). The filled
 cells in the moving figure will be represented by ones (1). Why this
 distinction is crucial we will see a bit later.
 
-#+begin_hiccup
-(str "<foo>" 3 "foo" "bar" "</foo>")
-#+end_hiccup
-
 * Preparation
 
 We will use [[https://github.com/technomancy/leiningen][leiningen]], so open the *project.clj* of the newly created
