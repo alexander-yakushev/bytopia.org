@@ -1,8 +1,8 @@
 {:title "Tags"}
 
-[:ul {:class "posts"}
+[:ul.posts
  (for [[tag files] (tag-map)]
-   [:h4 {:id tag} tag
+   [:h4#tag tag
     [:ul (for [f files
                :let [url (post-url f)
                      title (:title (first (io/read-doc f)))]]

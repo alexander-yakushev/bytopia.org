@@ -2,10 +2,10 @@
 #+description: Alex Yakushev's bio
 #+OPTIONS: toc:nil
 
-#+BEGIN_HTML
-<p><img class="entry-img-right" width="300" src="/images/alex.jpg"
-alt="Skeletor Wannabe"/></p>
-#+END_HTML
+#+begin_hiccup
+[:p [:img.entry-img-right {:src "/images/alex.jpg", :width 300
+                           :alt "Yep, it's me"}]]
+#+end_hiccup
 
 OK, since you are here, my name's Alex. If I were to describe myself
 in three statements they would be: student, bald, loves tinkering with
