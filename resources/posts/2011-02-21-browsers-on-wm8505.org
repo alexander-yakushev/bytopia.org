@@ -85,7 +85,7 @@ same engine for webpage rendering.
 
 Firefox is indeed the most functional browser here, it is
 plugin-extendable and supports all modern standarts. Though with
-capabilities comes the price - Firefox is very slow when running on
+capabilities comes the price --- Firefox is very slow when running on
 WM8505. Loading it takes about a minute and the browsing itself is
 much slower compared to above-mentioned browsers. You can still keep
 it as a reserve browser to open some complex website but day-to-day

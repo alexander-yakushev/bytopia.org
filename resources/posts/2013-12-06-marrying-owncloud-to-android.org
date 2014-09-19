@@ -37,7 +37,7 @@ happy with.
 
   Because I required something more automatic, I installed [[https://play.google.com/store/apps/details?id%3Ddk.tacit.android.foldersync.lite][FolderSync
   Lite]] to synchronize cloud folders with those on the devices. It
-  operates the same as desktop /ownCloud/ client - you specify folders
+  operates the same as desktop /ownCloud/ client --- you specify folders
   you want to synchronize and respective local directories, sync
   interval, overwrite policies etc etc; and it will download/upload
   files in these folders according to the rules. There is also a paid

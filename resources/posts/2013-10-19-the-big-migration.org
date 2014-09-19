@@ -27,7 +27,7 @@ VPS with 20GB SSD storage space. This is more than enough for me right
 now, and DO offers more advanced plans for roughly the same amount of
 money as other VPS providers do. I opted for an instance in
 San-Francisco (Amsterdam was unavailable when I was creating an
-instance), and that gives me around 150 ms latency - which is
+instance), and that gives me around 150 ms latency --- which is
 sufficient for my use-cases.
 
 #+readmore
@@ -74,7 +74,7 @@ sufficient for my use-cases.
   all went good.
 
   Finally, I transitioned my [[http://owncloud.org/][ownCloud]] server. That perhaps was the
-  main reason to move to a VPS - I wanted to keep my data a little
+  main reason to move to a VPS --- I wanted to keep my data a little
   closer, and all in one place. Now I use the 20GB I was provided with
   to store my photos, books and random files I move across devices. I
   also tried to store music (ownCloud has a web audio player and even

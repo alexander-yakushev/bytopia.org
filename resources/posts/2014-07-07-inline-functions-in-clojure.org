@@ -36,7 +36,7 @@ Macro
 #+END_SRC
 
    OK, that is a start. Inline function is like a macro, but it is a function.
-   We can try both out on a simple example - a debugging function that takes any
+   We can try both out on a simple example --- a debugging function that takes any
    value (or a symbol, or a form) and returns it as well as printing the result.
 
 #+BEGIN_SRC clojure

@@ -11,7 +11,7 @@ if you want to make some quick changes in a single file.
 * Emacs daemon
 
   If we can't reduce the Emacs start up time what could we possibly
-  do? We can start it less often - ideally only once when OS boots.
+  do? We can start it less often --- ideally only once when OS boots.
   That is the basic idea behind running Emacs as a daemon. To do it
   execute the following:
 

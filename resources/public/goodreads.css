@@ -1,30 +1,23 @@
-.gr_custom_container_13821383570 {
-}
-
-.gr_custom_header_13821383570 {
-}
-
-#sidebar h2.gr_custom_header_13821383570 a {
-    color: #333;
+.gr_custom_header_13821383570 a {
+    color: #fff;
 }
 
 .gr_custom_each_container_13821383570 {
     padding: 4px 10px 4px 15px;
     clear: both;
     overflow: auto;
-    border-bottom: 1px solid #d1d1d1;
+    border-bottom: 1px solid #fafafa;
 }
 
 .gr_custom_book_container_13821383570 {
     overflow: hidden;
-    height: 60px;
     float: left;
     margin-right: 4px;
-    width: 39px;
 }
 
 .gr_custom_author_13821383570 {
-    font-size: 10px;
+    margin: 2px 0 2px 0;
+    font-size: 11px;
 }
 
 .gr_custom_tags_13821383570 {

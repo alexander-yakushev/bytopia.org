@@ -1,10 +1,10 @@
-#+title: Emacs saves the day - again
+#+title: Emacs saves the day — again
 #+tags: emacs programming
 #+OPTIONS: toc:nil author:nil
 
 For many of us Emacs is more than just a text editor. It is a
 programming environment, text processor, file manager, image viewer,
-organizer - you name it. But what's most enthralling about Emacs is
+organizer --- you name it. But what's most enthralling about Emacs is
 the simplicity of ad-hoc repurposing it to the specific task. In this
 take I describe my recent application of Emacs to conveniently label
 large amount of images.
@@ -24,7 +24,7 @@ to each image.
 
 * The solution
 
-So the problem boils down to the following - press a correct key for
+So the problem boils down to the following --- press a correct key for
 every image; also delete images that contained unrecognizable character
 or were just artifacts. With no obvious way of automation, I at least
 wanted something that doesn't require any additional keypresses and
@@ -94,7 +94,7 @@ M-x query-replace-regexp RET \(.\)\(.+\) RET mv \2 \1\2
 #+END_SRC
 
 Save the file as a bash script and execute it inside the directory
-with images - and the day is saved! There's one more thing to do
+with images --- and the day is saved! There's one more thing to do
 though, we need to delete all the images that were not renamed. A
 simple =rm _*= will do the trick.
 

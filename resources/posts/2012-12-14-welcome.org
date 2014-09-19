@@ -40,13 +40,13 @@ this blog and will come here from time to time.
    - Static supports generation from org-mode files.
    - It uses Emacs for transforming org-files into HTML. Confusing at
      first, this method is very elegant and effective. For instance, I
-     get code highlighting for free - Emacs highlights code in
+     get code highlighting for free --- Emacs highlights code in
      resulting HTML itself.
    - It is written in Clojure, so it was very easy for me to add some
      extra functionality. Also Hiccup (generates HTML from Clojure
      data structures) is used for templating which almost entirely reduces the pain of
      writing HTML.
-   - Static is very small - only 400 SLOC, so I was able to comprehend
+   - Static is very small --- only 400 SLOC, so I was able to comprehend
      its codebase in one evening.
 
 ** Emacs and org-mode
@@ -59,7 +59,7 @@ this blog and will come here from time to time.
 
 ** Juvia
 
-   Comments are managed by [[https://github.com/phusion/juvia][Juvia]] - GPL-licensed commenting server. It
+   Comments are managed by [[https://github.com/phusion/juvia][Juvia]] --- GPL-licensed commenting server. It
    is somewhat similar to Disqus but you need to host it yourself. My
    Juvia instance runs on OpenShift as well. Not much else to say here
    except that Juvia is very AJAX-oriented, has a nice admin panel,

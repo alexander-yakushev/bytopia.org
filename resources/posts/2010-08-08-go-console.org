@@ -57,7 +57,7 @@ to get used to Midnight Commander.
 If you use *Pidgin*, you'll be glad there is [[http://developer.pidgin.im/wiki/Using%20Finch][finch]]. Finch is a console
 clone of pidgin, it has the same interface, it uses pidgin
 configuration, so you don't have to configure it at all. [[http://mcabber.com/][mcabber]] is an
-another nice program - it's a lightweight console XMPP client. It is
+another nice program --- it's a lightweight console XMPP client. It is
 highly configurable and has many handy features like external action
 triggers.
 
@@ -67,7 +67,7 @@ You probably already heard about [[http://mpd.wikia.com/wiki/Music_Player_Daemon
 fascinating software used all over the place where a network exists.
 It is a music server that can be controlled by any of the large amount
 of clients on the same computer or remotely. The simplest client for
-mpd is [[http://mpd.wikia.com/wiki/Client:Mpc][mpc]] - it has no interface at all, you just type commands to
+mpd is [[http://mpd.wikia.com/wiki/Client:Mpc][mpc]] --- it has no interface at all, you just type commands to
 control the player. Hence, it requires no resources at all. The list
 of most popular mpd clients can be found [[http://mpd.wikia.com/wiki/Clients][here]].
 
@@ -86,5 +86,5 @@ So, as you can see, console is full of programs that can easily
 replace their GUI counterparts. And although, you cannot do everything
 you want from the console (browsing, for instance. Nevertheless you
 can try [[http://elinks.or.cz/][elinks]]), terminal window can become your sincere and beloved
-friend - always accessible, always fast, always there to execute your
+friend --- always accessible, always fast, always there to execute your
 dreams.
