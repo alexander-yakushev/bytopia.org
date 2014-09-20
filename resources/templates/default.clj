@@ -17,18 +17,21 @@
     [:link {:rel "icon", :href "/images/favicon.ico" :type "image/x-icon"}]
     [:link {:rel "shortcut icon",:href "/images/favicon.ico" :type "image/x-icon"}]
     (include-css "/default.css")
-    (include-css "/tomorrow_night.css")
     (include-css "http://fonts.googleapis.com/css?family=Oswald")
-    (include-css "http://fonts.googleapis.com/css?family=Pathway+Gothic+One")
-    (when (= (:title metadata) "Home")
-      (include-css "/goodreads.css"))
     [:link {:rel "alternate", :type "application/rss+xml",
             :title (:site-title config), :href "/rss-feed"}]
     (if (= (:type metadata) :post)
       [:link {:rel "canonical" :href (str (:site-url config) (:url metadata))}])
-    [:title (str (:title metadata) " - " (:site-title config))]]
+    [:title (str (:title metadata) " - " (:site-title config))]
 
-   [:body
+    [:script {:type "text/javascript"}
+     "function lCSS(src){
+   var stylesheet = document.createElement('link');
+   stylesheet.href = src;
+   stylesheet.rel = 'stylesheet';
+   stylesheet.type = 'text/css';
+   document.getElementsByTagName('head')[0].appendChild(stylesheet);}"]]
+   [:body {:onload "lCSS('/tomorrow_night.css'); lCSS('/goodreads.css');"}
     [:div#masthead
      [:div#head
       [:div#top.clearfix

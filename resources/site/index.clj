@@ -25,6 +25,7 @@
            (list (if-not (= lastp (.indexOf synopsis "<p>"))
                    (subs synopsis 0 lastp) synopsis)
                  [:p.readmore
-                  [:a {:href url} "Read more ->>"]])))]]]])
+                  [:a {:href url} "Read more ->>"]]))
+         content)]]]])
 
  [:p "For more posts see the " [:a {:href "/archives.html"} "Archives"] " page."])
