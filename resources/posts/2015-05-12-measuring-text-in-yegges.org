@@ -1,0 +1,83 @@
+#+title: Measuring text in Yegges
+#+tags: emacs fun
+#+OPTIONS: toc:nil author:nil
+
+A couple of years ago I have discovered this silly definition of the word [[http://www.urbandictionary.com/define.php?term%3DYegge][Yegge]]
+on Urban Dictionary. For those who don't know Steve Yegge is a software
+developer, a former Google employee, and an author of his blog [[http://steve-yegge.blogspot.no/][Stevey's Blog
+Rants]]. So the UD definition of "Yegge" goes as following:
+
+#+BEGIN_QUOTE
+A measurement of length of a piece of writing, particularly when indicating a
+length excessive for the genre. A Yegge is approximately 4000 words or 25
+kilobytes.
+
+Named for well known programmer and technical blogger Steve Yegge, whose blog up
+to about 2009 was notorious for entries of approximately 1 or 2 Yegges in
+length, vastly exceeding the typical length of blog entries in the genre.
+
+Usage example: "I knew breaking up with him was a good idea after I got an email two Yegges
+long listing all the reasons why I should take him back."
+#+END_QUOTE
+
+#+readmore
+
+Steve's writing is indeed quite verbose, thus this definition sounded hilarious
+to me. In fact, I liked it so much that I started using this expression in my
+everyday speech. At some point I thought it would be a fun thing to actually
+measure text in those units. And where do I primarily work with text? In Emacs,
+of course. Fast forward 15 minutes, the code was written:
+
+#+BEGIN_SRC scheme
+(defun count-words--message (str start end)
+  (let* ((lines (count-lines start end))
+         (words (count-words start end))
+         (chars (- end start))
+         (yegges (sqrt (* (/ words 4000.0) (/ chars 25000.0)))))
+    (message "%s has %d line%s, %d word%s, %f Yegge%s and %d character%s."
+             str
+             lines (if (= lines 1) "" "s")
+             words (if (= words 1) "" "s")
+             yegges (if (= yegges 1) "" "s")
+             chars (if (= chars 1) "" "s"))))
+#+END_SRC
+
+I overloaded =count-words--message= function to include Yegges count beside
+regular statistics. This function is used by =count-words= and other similar
+facade functions. Because the UD definition is ambiguous in terms of whether to
+use words or characters to count Yegges, I take a geometric mean of them both.
+So now =count-words= should show us something like this:
+
+#+BEGIN_SRC text
+Buffer has 52 lines, 389 words, 0.096522 Yegges and 2395 characters.
+#+END_SRC
+
+Neat! Now we can measure how many Yegges the whole buffer, or just the selected
+region contains. While being fun, this metric works surprisingly well --- page
+count usually gives no idea about amounts of text because it depends on the font
+size and margins; number of words or characters are too big and unwieldy. Also,
+since the metric aggregates both word and character count, it punishes such
+cheating as abuse of small words and abbreviations as well flooding the text
+with non-alphanumeric symbols.
+
+Until you get an intuitive grasp of how much is a Yegge here's a short table of
+example texts together with their sizes:
+
+#+ATTR_HTML: :class table table-stripped table-comparison :style margin-left:20%; margin-right:20%; :width 60%
+| Piece of writing                          | Yegges |
+|-------------------------------------------+--------|
+| A full tweet                              | ~0.005 |
+| This post                                 |   0.17 |
+| "I have a dream" speech by M. L. King     |   0.39 |
+| [[http://www.paulgraham.com/avg.html]["Beating the Averages" by Paul Graham]]     |   1.07 |
+| [[http://www.gnu.org/gnu/manifesto.html][The GNU Manifesto]]                         |   1.08 |
+| [[http://steve-yegge.blogspot.no/2007/06/rich-programmer-food.html]["Rich Programmer Food" by Steve Yegge]]     |   1.35 |
+| [[http://en.wikipedia.org/wiki/Batman]["Batman" page on Wikipedia]]                |   3.20 |
+| "Tempest" by William Shakespeare          |   4.13 |
+| Average master thesis                     |   4--8 |
+| "The Great Gatsby" by F. Scott Fitzgerald |   11.6 |
+| "The Odyssey" by Homer                    |   28.8 |
+| "War and peace" by Leo Tolstoy            |    135 |
+
+I hope this post makes you smile, and who knows, maybe encourages to adopt this
+cool text metric. Happy writing!

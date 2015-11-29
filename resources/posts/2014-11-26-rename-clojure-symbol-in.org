@@ -1,0 +1,94 @@
+#+title: Rename symbol in Emacs (refactor like a baws)
+#+tags: clojure emacs
+#+OPTIONS: toc:nil author:nil
+
+#+begin_hiccup
+[:p [:img {:class "entry-img-right"
+:style "margin-top:20px;"
+:width 240
+:src "/images/post/gummer.jpg"
+:alt "Burt Gummer"}]]
+#+end_hiccup
+
+Emacs is the editor for real folk, and [[https://github.com/clojure-emacs/cider][CIDER]] is one sweet piece of software to
+program in Clojure, but some would argue that it lacks "big IDE" refactoring
+tools. This is partly true, but not entirely. Today I gonna show you an easy and
+cool way to rename all references inside a single function. This can be useful
+if you want to rename a local variable, or a binding introduced by let.
+
+There are certain tools that allow you to do project-wide replacement too, but
+they are outside the scope of its post. You should absolutely check @bbatsov's
+excellent [[https://github.com/bbatsov/projectile][Projectile]] package for some leads. But let's get back to our original task.
+
+#+readmore
+
+** Multiple cursors
+
+   Emacs users are not shy to borrow useful features from other editors.
+   Popularized in Sublime Text (probably), multiple cursors found their way to
+   Emacs in Magnar Sveen's [[https://github.com/magnars/multiple-cursors.el][multiple-cursors.el]] package. You can install it by
+   issuing =M-x package-install multiple-cursors=. This package provides many
+   useful tricks, but again for now we only need =mc/mark-all-like-this-dwim=.
+   Bind it to some key and you are good to go.
+
+** Renaming symbols
+
+   The workflow is the following: you are editing a function, you spot a symbol
+   you want to rename (likely a local variable), you move the cursor to that
+   symbol and execute =mc/mark-all-like-this-dwim=, type the changes, Enter.
+   Bam-bam-tapatapatapa-BOOM!
+
+   #+begin_html
+   <p><center><img src="/images/post/refactor.gif"
+   alt="Mapping workflow"/></center></p>
+   #+end_html
+
+   Like a baws! In fact this is not specific to Clojure and can be used with
+   any Lisp (or non-Lisp if combined with the next feature).
+
+** Narrowing
+
+   You'll notice how MC selected only symbols in the same defn-form, and not the
+   outside ones. It is because this function is intelligent, but there exist
+   also cruder tools that operate on the whole buffer. To tame those you'll need
+   another useful mechanic called narrowing.
+
+   Narrowing in Emacs allows to focus on a particular region of the buffer like
+   there's nothing else in that buffer. Sounds confusing? Well, it works confusing
+   too, that's why this functionality is disabled by default, so that if you were
+   to trigger it accidentally Emacs would ask you for confirmation. Now that you
+   know what narrowing is you can confidently enable for future sessions.
+
+   You can read more about narrowing [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Narrowing.html][here]], but for our task we'll only have to
+   define a single function which I shamelessly stole from
+   [[http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html][endlessparentheses.com]]. Put this into your =init.el=:
+
+   #+BEGIN_SRC scheme
+(defun narrow-or-widen-dwim (p)
+  "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
+Intelligently means: region, subtree, or defun, whichever applies
+first.
+
+With prefix P, don't widen, just narrow even if buffer is already
+narrowed."
+  (interactive "P")
+  (declare (interactive-only))
+  (cond ((and (buffer-narrowed-p) (not p)) (widen))
+        ((region-active-p)
+         (narrow-to-region (region-beginning) (region-end)))
+        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
+        (t (narrow-to-defun))))
+   #+END_SRC
+
+   It is a Do-What-I-Mean command, so it will perform the correct action every
+   time you call it. No need to memorize loads of functions, just bind this one
+   to some key combination and you are set. This single function will narrow to
+   a top-level sexp by default, narrow to region if region is active, and widen
+   if the current text is narrowed. Just splendid.
+
+** More?
+
+   If you know any other Emacs refactoring tricks, please share them in
+   comments. I know there is a whole project called [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor.el]] which I'm
+   yet to try. But I wanted to tell about this specific feature because it is
+   simple, seamless and composable. Enjoy your hacking!

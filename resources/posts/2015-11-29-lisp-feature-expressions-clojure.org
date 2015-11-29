@@ -1,0 +1,120 @@
+#+title: Lisp-like feature expressions in Clojure. Kinda sorta.
+#+tags: clojure compiler lisp dark-magic
+#+OPTIONS: toc:nil author:nil
+
+Clojure 1.7 finally saw a feature many people have been asking for --- [[http://clojure.org/reader#toc5][reader
+conditionals]]. It enables writing of platform-independent reusable code, where by
+platforms I mean Clojure, CLJS or ClojureCLR. With reader conditionals you can
+write code like this:
+
+#+BEGIN_SRC clojure
+[1 2 #?@(:clj [3 4] :cljs [5 6])]
+;; in clj => [1 2 3 4]
+;; in cljs => [1 2 5 6]
+;; anywhere else => [1 2]
+#+END_SRC
+
+This is cool, but unfortunately the list of features is currently limited to
+just three platforms. Additionally, the only place where you can use this syntax
+is inside =.cljc= files. So, goodbye to leveraging this from the REPL.
+
+On the other hand, Common Lisp has feature expressions as a first-class
+feature. Developers are free to define their own features and use them anywhere
+they like. And while this may create chaos and requires strict agreements
+between colleague, the feature itself is quite useful. Features like =:dev=,
+=:test= and =:prod= are quite prevalent in Common Lisp projects, and often they
+substitute other means of configuration and build type separation.
+
+So, for the above reasons, and mainly for fun, I decided to hijack the new
+reader conditionals functionality to make it extensible and omnipresent.
+
+*Disclaimer: do not use this in your projects and do not think it is acceptable*
+*to do such things in real life. In fact, forget everything you're going to see*
+*here.*
+
+#+readmore
+
+** Implementation
+
+   I picked [[http://boot-clj.com/][Boot]] as a testbed because Boot is nice, but also more transparent
+   than Leiningen in terms of when things are loaded and executed. Still, I
+   think this experiment can be trivially reproduced in Leiningen as well.
+   Now, let's begin.
+
+   Make an empty directory and create =build.boot= file in it with this line:
+
+   #+BEGIN_SRC clojure
+   (set-env! :dependencies '[[org.clojure/clojure "1.7.0"]])
+   #+END_SRC
+
+   This is already a valid Boot project, which is why Boot is amazing. Now, the
+   main part, add the following function to =build.boot=:
+
+   #+BEGIN_SRC clojure
+(defn set-features
+  "Kids, don't try this at home."
+  [& features]
+  (let [reader-opts {:read-cond :allow
+                     :features (set (conj features :clj))} ;; ¯\_(ツ)_/¯
+        hacked-rdr (proxy [clojure.lang.LispReader$ConditionalReader] []
+                     (invoke [reader mode opts pendingForms]
+                       (proxy-super invoke reader mode
+                                    reader-opts pendingForms)))
+        dispatch-macros (doto (.getDeclaredField clojure.lang.LispReader
+                                                 "dispatchMacros")
+                          (.setAccessible true))]
+    (aset (.get dispatch-macros nil) (int \?) hacked-rdr)))
+   #+END_SRC
+
+   Oh my! When called, this function creates a proxy for Clojure's original
+   ConditionalReader and makes sure it recognizes the new set of features we
+   provided. It also passes =:read-cond :allow= to the original reader so that
+   it doesn't reject conditional reader forms. Finally, we employ reflection to
+   replace the original ConditionalReader with our new reader in the
+   =dispatchMacros= array.
+
+   The last form that will go to =build.boot=:
+
+   #+BEGIN_SRC clojure
+(alter-var-root #'repl (fn [og-repl] (fn []
+                                      (set-features :spooky)
+                                      (og-repl))))
+   #+END_SRC
+
+   This is easy --- put a hook on Boot's =repl= task so that it sets our feature
+   first and then runs the REPL. Now we can launch the REPL like this:
+
+   : BOOT_CLOJURE_VERSION=1.7.0 boot repl
+
+   It is important to explicitly specify Clojure version to launch Boot with,
+   because by default Boot runs Clojure 1.6. When the REPL is up, let's test our
+   new feature expression functionality:
+
+   #+BEGIN_SRC clojure
+boot.user=> (defn sum [a b]
+       #_=> #?(:spooky (println "doot doot"))
+       #_=> (+ a b))
+#'boot.user/sum
+boot.user=> (sum 2 3)
+doot doot
+5
+   #+END_SRC
+
+   You got spooked! We can even call =set-features= from the REPL:
+
+   #+BEGIN_SRC clojure
+my-ns=> (boot.user/set-features :prod)
+#object[boot.user.proxy$clojure.lang.LispReader$ConditionalReader...
+my-ns=> [1 2 #?@(:prod [3 4]) 5 6]
+[1 2 3 4 5 6]
+   #+END_SRC
+
+   Indeed, it works. We could, actually, even not redefine Boot's =repl= task
+   and just set features from the default one --- but this way we can't
+   guarantee that features are pushed before the code in source directories is
+   loaded.
+
+   So, with just a tiny knowledge of the compiler, and some reflection magic, we
+   were able to hack together a quite useful feature. I hope the Clojure Core
+   team takes the hint, and in the meantime I'm totally using this in
+   production. Just kidding, keep the the disclaimer in mind and have fun!

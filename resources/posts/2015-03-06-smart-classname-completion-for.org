@@ -1,0 +1,28 @@
+#+title: Smart classname completion for CIDER
+#+tags: clojure emacs
+#+OPTIONS: toc:nil author:nil
+
+Quite often Clojure hackers need to interoperate with various Java classes. To
+do that they have to import those classes into the namespace. It is easy if you
+know the full name of the class, together with its package, but what if you
+don't? In that case you have to google where the sought class is located, and
+then type in the whole path to it.
+
+Java developers who use any decent IDE are not familiar with such problem. They
+just type in the short name of the class, and the auto-completion offers them
+the list of all classes short name of which matches what they typed in. But can
+we have something like that for Clojure? Of course we can!
+
+#+readmore
+
+#+begin_hiccup
+[:p [:center [:img {:src "/images/post/class-completion.gif", :alt
+"Smart classname completion in action"}]]]
+#+end_hiccup
+
+It will work only inside the =:import= block of namespace declaration since it
+uses Compliment context parsing to figure out where the completion was called.
+
+This feature will soon land to CIDER. You can try it out right now if you use
+the bleeding edge =cider-nrepl= (that is, =0.9.0-SNAPSHOT=), and also update the
+=ac-cider= from MELPA to the latest version.

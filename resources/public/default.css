@@ -12,7 +12,7 @@ body#layout #slider {display:none;}
 body {
     font-family:Arial,Tahoma,Century gothic, sans-serif;
     color:#333;
-    font-size:13px;
+    font-size:14px;
     background:#eee;
     margin:0 auto;
     padding:0;
@@ -816,6 +816,7 @@ pre {
 
     font-family: Droid Sans Mono,monospace;
     background: #1d1f21;
+    color: #c5c8c6;
     padding: 5px;
     font-size:100%;
     line-height: 150%;
@@ -823,4 +824,16 @@ pre {
 
     -moz-border-radius: 5px;
     border-radius: 5px;
+}
+
+code {
+    padding: 3px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f0f0f0;
+}
+
+.highlight pre {
+    color:#c5c8c6;
 }

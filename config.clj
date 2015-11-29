@@ -19,4 +19,4 @@
  :post-deploy-cmd ["ssh" "digitalocean-bytopia" "/home/www-data/deploy-www"]
 
  :emacs "/usr/bin/emacs"
- :emacs-eval [(require 'org)]]
+ :emacs-eval [(require 'org) (setq org-export-with-section-numbers nil)]]

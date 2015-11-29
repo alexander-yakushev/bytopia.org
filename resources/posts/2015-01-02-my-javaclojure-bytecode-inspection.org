@@ -1,0 +1,139 @@
+#+title: My Java/Clojure bytecode inspection workflow
+#+tags: clojure emacs java
+#+OPTIONS: toc:nil author:nil
+
+Last summer I had to do a fair bit of Clojure compiler hacking. Since the
+primary objective of a compiler is to produce compiled code (in case of Clojure
+it is Java bytecode), this process involved reading classfiles every now and
+then. To make it easier I set up a nice environment using publicly available
+tools to make reading the bytecode as painless as possible.
+
+Note that despite me using this workflow for Clojure, there is nothing here
+specific to it, so you can utilize the same setup when working with Java, Scala
+or any other JVM-compiled language out there.
+
+#+readmore
+
+** javap
+
+   This helpful tool comes with a standard JDK distribution. It is likely to be
+   already on your PATH, so you can call it like this:
+
+   : javap -c target/classes/clojure/core\$bases.class
+
+   And get the following:
+
+   #+BEGIN_SRC java
+public final class clojure.core$bases extends clojure.lang.AFunction {
+  public static final clojure.lang.Var const__0;
+
+  public static final clojure.lang.Var const__1;
+
+  public static {};
+    Code:
+       0: ldc           #12                 // String clojure.core
+       2: ldc           #14                 // String seq
+       4: invokestatic  #20                 // Method clojure/lang/RT.var:(Ljava/lang/String;Ljava/lang/String;)Lclojure/lang/Var;
+       7: checkcast     #22                 // class clojure/lang/Var
+  ...
+   #+END_SRC
+
+** Java decompiler
+
+   While having disassembled bytecode is nice and all, most of the time you
+   would rather see the respective Java code. [[http://varaneckas.com/jad/][Jad]] comes to rescue. You can
+   install it from your distro's repositories or just download and unpack the
+   archive.
+
+   Jad tries its best to transform the bytecode back into Java. Of course it
+   can't reconstruct everything, and specifically for Clojure the code looks
+   quite weird. But in most cases it is still more lucid than digging through
+   byte codes.
+
+   Say, you execute a command:
+
+   : jad core\$empty_QMARK_.class
+
+   If everything goes well the decompiled class will be written to
+   =core\$empty_QMARK_.jad=. View it and you will find the following:
+
+   #+BEGIN_SRC java
+package clojure;
+
+import clojure.lang.AFunction;
+import clojure.lang.IFn;
+import clojure.lang.RT;
+import clojure.lang.Var;
+
+public final class  extends AFunction
+{
+
+    public Object invoke(Object coll)
+    {
+        return ((IFn)const__0.getRawRoot()).invoke(((IFn)const__1.getRawRoot()).invoke(coll = null));
+    }
+
+    public static final Var const__0 = (Var)RT.var("clojure.core", "not");
+    public static final Var const__1 = (Var)RT.var("clojure.core", "seq");
+
+
+    public ()
+    {
+    }
+}
+   #+END_SRC
+
+   To those who haven't yet seen Clojure-produced bytecode before this may seem
+   incoherent, but after some practice you'll get a handle on it. In this
+   particular case, the code you see in the =invoke= method simply calls =(not
+   (seq coll))=.
+
+** Emacs
+
+   Having these tools as shell commands is surely convenient, but because I
+   spend almost all of my development time in Emacs I'd like to have them
+   somehow integrated. Luckily, "Emacs" and "integrated" are exact synonyms.
+   First, you will need to install =javap= package (available on MELPA and
+   Marmalade) and also [[https://gist.github.com/4141372b51e12b10683d][javad.el]] (put it into your =~/.emacs.d/= directory). Then
+   insert the following code into =init.el=:
+
+   #+BEGIN_SRC scheme
+;; Load both modes
+(load "~/.emacs.d/javad.el")
+(require 'javap-mode)
+
+(defun javad-find-class (&rest args)
+  (interactive)
+  (if (not (string= ".class" (substring (buffer-file-name) -6 nil)))
+      nil
+    (message "Show class as: [b]ytecode, [d]ecompiled or [i]dentity?")
+    (let ((resp (read-char)))
+      (cond
+       ((= resp 98) (progn (javap-buffer) nil))
+       ((= resp 100) (progn (javad-buffer) nil))
+       (t nil))
+      (let ((buff (current-buffer)))
+        (switch-to-buffer buff)))))
+
+(add-hook 'find-file-hook 'javad-find-class)
+   #+END_SRC
+
+   This is actually an abhorrent solution and I welcome anyone to fix it for me.
+   What it does is creating a hook that will be executed when a file is opened
+   in Emacs. If the file name ends with =.class=, the user will be interactively
+   queried about what (s)he wants to do with the class: disassemble, decompile,
+   or nothing. It is handy to be able to choose from both former options, as
+   some tricky classes cannot be processed by Jad, so you can always fallback to
+   reading the bytecode.
+
+   This setup is especially convenient for me since I use Emacs as my file
+   manager too (via amazing [[http://emacswiki.org/emacs/Sunrise_Commander][Sunrise Commander]]). From there I can navigate to any
+   classfile and open it selecting between javap and Jad. This feels much more
+   empowering than typing the commands in the shell, plus you get syntax
+   highlighting for both bytecode and decompiled Java.
+
+** Conclusion
+
+   I hope the provided information will be of help to those who must deal with
+   bytecode extensively, or enthusiasts who occasionally want to see how their
+   compiled code looks like. Enjoy!
