@@ -1,0 +1,25 @@
+#+title: Beautiful cheatsheet template in LaTeX
+#+tags: latex emacs
+#+OPTIONS: toc:nil author:nil
+
+Yesterday I needed to make a cheatsheet for my coworkers, but I didn't want to
+use online services or other proprietary tools. I turned to LaTeX, but there
+weren't any enticing eye-candy templates that I would be proud to give out. [[http://wch.github.io/latexsheet/][This
+template]] was the closest I could get, it looks neat by doesn't have a cherry on
+the top.
+
+So I spent an evening to pimp that template and turn it into something that you
+can see below. Just edit the =cheatsheet.tex= file and compile it with
+=xelatex=.
+
+[[https://gist.github.com/alexander-yakushev/c773543bf9a957749f79][TeX source]]
+
+[[http://www.bytopia.org/raw/cheatsheet.pdf][Resulting PDF]]
+
+#+readmore
+
+#+begin_hiccup
+[:p [:img {:width 680
+           :src "/images/post/cheatsheet.png"
+           :alt "DigitalOcean logo"}]]
+#+end_hiccup
