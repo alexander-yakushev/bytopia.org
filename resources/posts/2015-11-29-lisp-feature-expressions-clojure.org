@@ -16,7 +16,10 @@ write code like this:
 
 This is cool, but unfortunately the list of features is currently limited to
 just three platforms. Additionally, the only place where you can use this syntax
-is inside =.cljc= files. So, goodbye to leveraging this from the REPL.
+is inside =.cljc= files. +So, goodbye to leveraging this from the REPL.+ Hint by
+*[[https://twitter.com/mfikes][@mfikes]]*: it works in REPL launched directly from Clojure jar, but for some
+reason it doesn't in REPLs spawned by neither Leiningen nor Boot. Yet, most
+people use REPL from those tools, so we're still screwed.
 
 On the other hand, Common Lisp has feature expressions as a first-class
 feature. Developers are free to define their own features and use them anywhere

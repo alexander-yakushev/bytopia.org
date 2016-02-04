@@ -1,0 +1,56 @@
+#+title: Separate regular and CIDER repls in Boot
+#+tags: clojure boot cider emacs
+#+OPTIONS: toc:nil author:nil
+
+Until now, Boot documentation had imperfect [[https://github.com/boot-clj/boot/wiki/Cider-REPL][instructions]] on how to setup Boot to
+fully work with CIDER. I've updated the page to include a better way which
+separates regular repl (launched from terminal, better be quick to load) from
+the heavy CIDER repl with all the necessary dependencies. Here we go, add this
+code to =~/.boot/profile.boot=:
+
+#+BEGIN_SRC clojure
+(require 'boot.repl)
+
+(deftask cider ""
+  []
+  (reset! boot.repl/*default-dependencies*
+         '[[org.clojure/tools.nrepl "0.2.12"]
+           [cider/cider-nrepl "0.10.0"]
+           [refactor-nrepl "2.0.0-SNAPSHOT"]])
+  (reset! boot.repl/*default-middleware*
+          ['cider.nrepl/cider-middleware
+           'refactor-nrepl.middleware/wrap-refactor]))
+#+END_SRC
+
+Then in Emacs do =M-x customize-variable cider-boot-parameters= and set it to
+=cider repl -s wait=.
+
+#+readmore
+
+Now, if you compare the loading time of two REPLs:
+
+#+BEGIN_SRC
+$ time boot cider repl -s
+...
+boot cider repl -s  32.92s user 1.20s system 210% cpu 16.182 total
+
+$ time boot repl -s
+...
+boot repl -s  12.71s user 0.37s system 242% cpu 5.385 total
+#+END_SRC
+
+That's 5 versus 16 seconds! Quite significant, especially if you just want to
+quickly check something in the REPL from the terminal.
+
+** Explanation
+
+   Tasks can be used in Boot to imitate profiles in Leiningen. We have created a
+   =cider= task which only changes some configuration inside Boot and delegates
+   work to the next task. So =boot cider repl= would be roughly equivalent to
+   =lein with-profiles cider repl= had we a similar =:cider= profile in
+   Leiningen.
+
+   Boot still feels a little bit unpolished, but I think I will eventually
+   migrate to it completely, and for good reasons. I plan to write an extensive
+   entry soon about why I like the Boot approach over the Leiningen approach.
+   Stay tuned!

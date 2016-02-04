@@ -1,0 +1,40 @@
+#+title: Omniconf: comprehensive configuration library for Clojure
+#+tags: clojure
+#+OPTIONS: toc:nil author:nil
+
+/TL; DR: [[https://github.com/grammarly/omniconf][Omniconf]] is a new configuration library for Clojure that unifies/
+/environment variables, command-line options and config files; and ensures the/
+/configuration is complete and correct before the main application code runs./
+
+Configuring your application is often a daunting and thankless task. It very
+much depends on the way you launch your program, so it is difficult to solve the
+configuration problem for the general case. [[http://12factor.net/][Twelve-factor app]] guidelines suggest
+using environment variables for everything but that rule is unnecessarily rigid.
+If you have many options, configuration files are more convenient; when you
+launch the app from the command line (in a dev environment, for example), the
+command-line arguments are more preferable. But now you suddenly have a problem
+of having a unified access to all those configuration sources.
+
+There are already libraries that solve the configuration problem in Clojure,
+namely: [[https://github.com/weavejester/environ][Environ]], [[https://github.com/juxt/aero][Aero]], [[https://github.com/jarohen/nomad][Nomad]], [[https://github.com/reborg/fluorine][Fluorine]]. Each of them is quite good at what they
+do; however, we at Grammarly needed extra functionality --- to check the final
+configuration state before the main program executes, and make sure there are no
+missing or incorrect options. What began as a few helper functions was extracted
+into a separate library and called [[https://github.com/grammarly/omniconf][Omniconf]].
+
+Using Omniconf is not as easy as in other libraries: here you must define a
+[[https://github.com/grammarly/omniconf#usage][schema]] for each option your application supports. Schema describes the type of
+an option, how it should be parsed, whether it is required, any additional
+restrictions on the value. Options can be nested for easier structuring. Then,
+after you have tapped all configuration sources (ENV, CMD, edn files), you call
+=verify= and any inconsistencies will result in an exception. If everything is
+good, your whole configuration map will be pretty-printed into the console.
+
+Another benefit of having a predefined schema is that you get automatically
+generated help message when running your program with =--help= flag; the message
+exhaustively describes every option your program support.
+
+In conclusion, Omniconf solves a particular subset of configuration problems
+that you might not be having; but if you do have them, then you'll probably
+appreciate our solution. As always, please report any bugs or suggestions in
+[[https://github.com/grammarly/omniconf/issues][Github issues]]. Happy hacking!
