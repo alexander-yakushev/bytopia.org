@@ -7,7 +7,7 @@ tinkering with it. This little noname machines ship with preinstalled
 WinCE that is very close to useless, so as soon as I got the netbook I
 installed [[http://bento-linux.org/wiki/vt8505/wm8505/debian][this Debian distribution]] on it. And since I don't want my
 time to be utterly wasted I decided to start a series of post
-concering different aspects of using Linux on WM8505 netbooks. In this
+concerning different aspects of using Linux on WM8505 netbooks. In this
 very entry I would talk about different browsers available for this
 installation, from the simplest to the most functional. So, let's
 start.
