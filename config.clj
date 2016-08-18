@@ -9,14 +9,14 @@
  :encoding "UTF-8"
  :blog-as-index false
  :create-archives false
- :create-tags false
+ :create-tags true
  :rss-for-tags ["clojure"]
 
- :rsync "rsync"
- :host "digitalocean-bytopia"
- :user "unlogic"
- :deploy-dir "/home/www-data/"
- :post-deploy-cmd ["ssh" "digitalocean-bytopia" "/home/www-data/deploy-www"]
+ :rsync "rsync -avu -og --chmod=a+rX"
+ :host "do-core"
+ ;; :user "unlogic"
+ :deploy-dir "services/bytopia.org/"
+ ;; :post-deploy-cmd ["ssh" "digitalocean-bytopia" "/home/www-data/deploy-www"]
 
  :emacs "/usr/bin/emacs"
  :emacs-eval [(require 'org) (setq org-export-with-section-numbers nil)]]

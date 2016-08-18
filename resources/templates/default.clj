@@ -49,8 +49,6 @@
         [:a {:href "/rss-feed"} [:img {:src "/images/icons/rss.png"}]]
         [:a {:href "https://github.com/alexander-yakushev"} [:img {:src "/images/icons/github.png"}]]
         [:a {:href "mailto:alex@bytopia.org"} [:img {:src "/images/icons/email.png"}]]
-        [:a {:href "https://plus.google.com/u/0/107472102450770404696"} [:img {:src "/images/icons/gplus.png"}]]
-        [:a {:href "https://www.linkedin.com/profile/view?id=82917611"} [:img {:src "/images/icons/linkedin.png"}]]
         [:a {:href "https://twitter.com/unlog1c"} [:img {:src "/images/icons/twitter.png"}]]]]
 
       [:div#botmenu
@@ -107,7 +105,9 @@
                   content
                   (when (= (:type metadata) :post)
                     [:div#comments
-                     [:script {:src "/juvia.js", :type "text/javascript"}]])]]]]
+                     [:script {:data-isso "//bytopia.org/comments/"
+                               :src "//bytopia.org/comments/js/embed.min.js"}]
+                     [:section#isso-thread]])]]]]
 
               content)]]]]]]
       [:div#right
@@ -154,15 +154,13 @@
   _paq.push([\"enableLinkTracking\"]);
 
   (function() {
-    var u=\"http://analytics.bytopia.org/\";
-    _paq.push([\"setTrackerUrl\", u+\"piwik.php\"]);
-    _paq.push([\"setSiteId\", \"1\"]);
+    var u=\"//analytics.bytopia.org/\";
+    _paq.push([\"setTrackerUrl\", u+\"jquery.min.php\"]);
+    _paq.push([\"setSiteId\", 1]);
     var d=document, g=d.createElement(\"script\"), s=d.getElementsByTagName(\"script\")[0]; g.type=\"text/javascript\";
-    g.defer=true; g.async=true; g.src=u+\"piwik.js\"; s.parentNode.insertBefore(g,s);
+    g.defer=true; g.async=true; g.src=u+\"jquery.min.js\"; s.parentNode.insertBefore(g,s);
   })();
 </script>
 <!-- End Piwik Code -->"
-    ;; [:script {:src "/piwik.js" :type "text/javascript"}]
-    ;; [:noscript [:p [:img {:src "http://analytics.bytopia.org/piwik.php?idsite=1",
-    ;;                       :style "border:0", :alt ""}]]]
-    ]])
+    [:noscript [:p [:img {:src "//extras.bytopia.org/jquery.min.php?idsite=1",
+                          :style "border:0", :alt ""}]]]]])
