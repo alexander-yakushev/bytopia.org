@@ -1,0 +1,74 @@
+#+title: What Is a List? The Ultimate Predicate Showdown
+#+tags: clojure
+#+OPTIONS: toc:nil author:nil
+
+/This post was originally written in a [[http://notebook.bytopia.org/view.html?source=local&id=list-predicates][notebook]]. Check out [[http://gorilla-repl.org/][Gorilla REPL]] if you
+haven't done it yet!/
+
+A sizeable number of Clojure developers had some Common Lisp experience in the
+past. When asked what the main Clojure advantages over CL are they often mention
+having a single equality operator (compared to Lisp's =eq=, =eql=, =equal=,
+=equalp=). It might come as a minor point, but in practice, it is very
+cognitively exhausting to keep track of which one you should use. What's, even
+more, jarring is that =eql= — not the most intuitive one — is usually the
+default. Can you explain with a straight face to a beginner that their
+string-keyed hashtable didn't work because it was created with a wrong equality
+operator? I never could.
+
+But Clojure has a similar sin of its own — the multitude of list type
+predicates. If woken up at 3 A.M. and asked what the standard Clojure data
+structures are, you would likely name lists, vectors, maps, and sets. But how do
+you tell if the given object is a data structure of a certain type? "Well",
+you'd say, "there are =vector?=, =map?=, =set?=, and... =list?=? Leave me alone,
+man, I'm trying to catch some z's."
+
+Gotcha! The thing is, =list?= is a weak predicate. It checks if the object is
+precisely a PersistentList, but there are plenty of things in Clojure that look
+like lists without being ones.
+
+#+readmore
+
+#+BEGIN_SRC clojure
+(list? (range 10)) => false
+
+(list? (rest [1 2 3])) => false
+
+(list? (concat '(1 2) '(3))) => false
+
+(list? `(1 2 3)) => false
+#+END_SRC
+
+Lies everywhere! "Hold on, wildman. Every Clojure developer worth their salt
+should know that =seq?= is the way to roll." Indeed, =seq?= returns true in all
+of the examples above, while returning false on vectors. It is the very "list"
+predicate where you define a list as "something in round parentheses".
+
+For convenience, I've made a table comparing all these predicates.
+
+| Expression              | Type               | list? | seq? | seque ntial? | coll? | (instance? List %) |
+|-------------------------+--------------------+-------+------+--------------+-------+--------------------|
+| '(1 2 3)                | PersistentList     | ✓     | ✓    | ✓            | ✓     | ✓                  |
+| =(list 1 2 3)=          | PersistentList     | ✓     | ✓    | ✓            | ✓     | ✓                  |
+| =(range 10)=            | LongRange          | ✗     | ✓    | ✓            | ✓     | ✓                  |
+| =(repeat 1)=            | Repeat             | ✗     | ✓    | ✓            | ✓     | ✓                  |
+| =(rest [1 2 3])=        | ChunkedSeq         | ✗     | ✓    | ✓            | ✓     | ✓                  |
+| =(concat '(1 2) '(3))=  | LazySeq            | ✗     | ✓    | ✓            | ✓     | ✓                  |
+| =`(1 2 3)=              | Cons               | ✗     | ✓    | ✓            | ✓     | ✓                  |
+| =[1 2 3]=               | PersistentVector   | ✗     | ✗    | ✓            | ✓     | ✓                  |
+| =#{1 2 3}=              | PersistentHashSet  | ✗     | ✗    | ✗            | ✓     | ✗                  |
+| ={1 2, 3 4}=            | PersistentArrayMap | ✗     | ✗    | ✗            | ✓     | ✗                  |
+| =(LinkedList. [1 2 3])= | LinkedList         | ✗     | ✗    | ✗            | ✗     | ✓                  |
+| =(ArrayList. [1 2 3])=  | ArrayList          | ✗     | ✗    | ✗            | ✗     | ✓                  |
+| \"123\""                | String             | ✗     | ✗    | ✗            | ✗     | ✗                  |
+|-------------------------+--------------------+-------+------+--------------+-------+--------------------|
+
+Nothing really surprising in the results:
+
+- =seq?= should be your default list predicate
+- use =list?= only to check exactly for IPersistentList children
+- use =sequential?= to check for both lists and vectors
+- use =coll?= to check for any of the four main Clojure collections
+- use =#(instance? java.util.List %)= if you interoperate with Java code.
+
+I hope that after reading this article, you will never again be bitten by
+Clojure list predicates. Hack and be merry!
