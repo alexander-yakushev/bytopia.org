@@ -146,9 +146,9 @@ context does. Again, step-wise:
    (rrf).
 2. Call rrf with zero arguments to get the initial value. E.g. =(+) => 0=.
    Transducers might modify this aspect of the reducing function, but they
-   usually don't. /Aha! That's what the 0-arity =([] (rf))= does! It falls
-   through to the wrapped rf, and on the bottom, the initial rf (like =+=) will
-   know how to produce the initial value. Neat./
+   usually don't. /Aha! That's what the 0-arity =([] (rf))= does! It falls/
+   /through to the wrapped rf, and on the bottom, the initial rf (like =+=) will/
+   /know how to produce the initial value. Neat./
 3. While there are elements in the input collection, take them one by one, and
    call =(rrf result input)=, where =result= is the outcome of the previous
    call.

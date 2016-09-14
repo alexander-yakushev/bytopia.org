@@ -837,3 +837,7 @@ code {
 .highlight pre {
     color:#c5c8c6;
 }
+
+.entry br {
+    display: inline;
+}
