@@ -12,11 +12,10 @@
  :create-tags true
  :rss-for-tags ["clojure"]
 
- :rsync "rsync -avu -og --chmod=a+rX"
+ :rsync ["rsync" "--delete" "--checksum" "--recursive" "-avz" "-og" "--chmod=a+rX"]
  :host "do-core"
- ;; :user "unlogic"
- :deploy-dir "services/bytopia.org/"
- ;; :post-deploy-cmd ["ssh" "digitalocean-bytopia" "/home/www-data/deploy-www"]
+ :user "core"
+ :deploy-dir "~/services/bytopia.org/"
 
  :emacs "/usr/bin/emacs"
  :emacs-eval [(require 'org) (setq org-export-with-section-numbers nil)]]

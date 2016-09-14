@@ -7,33 +7,22 @@
                            :alt "Yep, it's me"}]]
 #+end_hiccup
 
-OK, since you are here, my name's Alex. If I were to describe myself
-in three statements they would be: student, bald, loves tinkering with
-things. Some of those things I've tinkered with will appear in this
-blog, and whether you like them or not I would be delighted to hear
-your thoughts and comments.
+This page is a place where I'm supposed to describe myself with nouns and
+adjectives while simultaneously pretending to be much deeper than the shallow
+description I wrote. If that's the game, then I'm among everything else a
+software engineer at [[https://www.grammarly.com/][Grammarly]], Clojure/Lisp aficionado, strong believer in
+DevOps/full service ownership, distributed systems amateur and enthusiast. I'm
+having genuine fun developing software, and I constantly try to improve the ways
+to do it.
 
-The name "Bytopia" comes from Dungeons and Dragons lore where it is a
-plane of existence also known as "Twin Paradises of Bytopia". I kind
-of like the name and how it sounds like /byte-op-ia/ so I've picked it as
-the domain (couldn't get .com though :-/). I hope Wizards of the Coast
-don't get mad at me for that.
+The name "Bytopia" comes from Dungeons and Dragons lore where it is a plane of
+existence also known as "Twin Paradises of Bytopia". I kind of like the name and
+how it sounds like /byte-op-ia/ so I've picked it as the domain (couldn't get
+.com though :-/). I hope Wizards of the Coast don't get mad at me for that.
 
-This site would never happen if not for these marvelous gems of
-software: [[http://www.gnu.org/software/emacs/][GNU Emacs]], [[http://orgmode.org/][Org-mode]], [[https://github.com/nakkaya/static][static]]. I am much obliged to their
-authors for creating such a great projects and sharing them with
-everyone.
+This site would never happen if not for these marvelous gems: [[http://www.gnu.org/software/emacs/][GNU Emacs]],
+[[http://orgmode.org/][Org-mode]], [[https://github.com/nakkaya/static][static]]. I am much obliged to their authors for creating such a great
+projects and sharing them with everyone.
 
-Feel free to contact me at any time for any possible reason (except
-for selling pills and reclaiming Nigerian princes' heritage,
-preferably) at [[mailto:alex@bytopia.org][alex@bytopia.org]]. Sometimes I hang around on #clojure
-channel at [[http://freenode.net/][freenode]] as /alexyakushev/.
-
-*** The pieces of my shattered identity can also be found on:
-
- - [[http://gplus.to/alexyakushev][Google+]]
- - [[http://github.com/alexander-yakushev][Github]]
- - [[http://www.goodreads.com/user/show/5694609-alexander-yakushev][Goodreads]]
- - [[http://www.last.fm/user/Unlog1c][last.fm]]
- - [[http://www.linkedin.com/profile/view?id=82917611&trk=tab_pro][LinkedIn]]
- - [[http://twitter.com/unlog1c][Twitter]]
+Feel free to contact me at any time for any possible reason at [[mailto:alex@bytopia.org][alex@bytopia.org]].
+Sometimes I hang around on #clojure channel at [[http://freenode.net/][freenode]] as /alexyakushev/.
