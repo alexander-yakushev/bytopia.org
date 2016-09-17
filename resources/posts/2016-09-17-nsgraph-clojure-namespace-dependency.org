@@ -1,0 +1,23 @@
+#+title: ns-graph - Clojure namespace dependency grapher
+#+tags: clojure leiningen boot
+#+OPTIONS: toc:nil author:nil
+
+I finally managed to polish a thing that lived on my hard drive in disassembled
+state for years. [[https://github.com/alexander-yakushev/ns-graph][ns-graph]] is initially a fork of the abandoned
+clojure-dependency-grapher. As vain as it may seem, this tools is often very
+useful to me. It is surprisingly descriptive when you need to understand the
+high-level architecture of some project. Recently I wanted to catch up with the
+changes in [[https://github.com/clojure-emacs/cider-nrepl][cider-nrepl]] and figure out where exactly it uses its new
+dependencies. Well, sometimes you should think carefully what you wish for.
+
+#+readmore
+
+#+begin_hiccup
+[:p [:img {:width 680
+           :src "/images/post/cider-nrepl-ns-graph.svg"
+           :alt "CIDER hairball"}]]
+#+end_hiccup
+
+ns-graph works with both Leiningen and Boot. It is quite easy to support both
+build tools, so I guess in future we will see more heterotooling plugins like
+this. Consult [[https://github.com/alexander-yakushev/ns-graph][README]] to get started, and enjoy!

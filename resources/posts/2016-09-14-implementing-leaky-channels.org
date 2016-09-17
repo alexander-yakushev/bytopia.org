@@ -90,11 +90,11 @@
 (dotimes [i 100] (a/>!! c i)) ; Put 100 values onto the channel. Values begin to drip.
 
 
-(repeatedly 10 #(a/<!! a)) ; Take 10 values from the channel.
+(repeatedly 10 #(a/<!! c)) ; Take 10 values from the channel.
 => (2 3 4 5 6 7 8 9 10 11) ; Apparently, the first two values have leaked out.
 
 
-(repeatedly 10 #(a/<!! a)) ; Take another 10 values.
+(repeatedly 10 #(a/<!! c)) ; Take another 10 values.
 => (17 18 19 20 21 22 23 24 25 26) ; While we were messing around, even more values slipped away.
 
 
