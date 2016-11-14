@@ -1,0 +1,97 @@
+#+title: Beware of assertions
+#+tags: clojure
+#+OPTIONS: toc:nil author:nil
+
+What I write below might be universal knowledge, but I was personally bitten by
+this more than once, so I feel the need to emphasize it once again.
+
+Clojure's [[https://clojuredocs.org/clojure.core/assert][assert]] form can be used for quick&dirty verification and consistency
+checking in your code. It is convenient to have them during development because
+they may discover incorrect usage of functions before the mistake drops deeper
+into the callstack and fails with something like =NullPointerException= or
+=java.lang.Long cannot be cast to clojure.lang.IFn=. And for this task =assert=
+is perfectly fine --- it is there out of the box, and you can disable the
+assertions in production by setting =clojure.core/*assert*= var to false.
+
+The problems begin when you stick to assertions for prod-time data validation
+(once again, you may already be smart enough not do it. I wasn't).
+
+#+readmore
+
+#+BEGIN_SRC clojure
+(assert nil "Oops!")
+; java.lang.AssertionError: Assert failed: Oops!
+
+(supers AssertionError)
+#{java.lang.Error java.lang.Object
+  java.lang.Throwable java.io.Serializable}
+#+END_SRC
+
+There's your (not-so-)subtle landmine. =AssertionError=, as its name implies, is
+a subclass of =Error=, not =Exception=. So, unless you catch =Throwable= instead
+of =Exception= in your high-level crash-recovering code (which is a questionable
+practice in itself), the assertion errors will happily fall through the cracks
+and cause some of the following:
+
+- crash the execution thread
+- fail to log properly
+- fail to respond to the client
+
+But if assertions are bad in production, what are the options?
+
+** [[http://clojure.org/about/spec][clojure.spec]] and [[https://github.com/plumatic/schema][Schema]]
+
+   With the release of clojure.spec in Clojure 1.9 it will be even less likely
+   for =assert= to be used for validation. Also, Schema was around long enough
+   for people to know better. These two tools are much more suited for the task.
+   I can't recommend enough to learn either of them (more so clojure.spec since
+   it is going to become the de-facto standard soon).
+
+   What if you need to check some assumption or invariant midway through the
+   function? Schema is a bit inconvenient for that (after all, its primary
+   purpose is automatic validation on function boundaries). Spec has better API
+   for this case, yet sometimes you want something as straightforward as
+   =assert=.
+
+** [[https://github.com/ptaoussanis/truss][Truss]]
+
+   Truss is a lightweight assertion library. It has fewer features than Spec and
+   Schema but is zero-ceremony and easy to understand. You should consider
+   Truss if you need minimal improvement over =assert= and don't want to invest
+   into comprehensive validation solutions.
+
+** Roll your own
+
+   If, for whatever reason, you don't feel like pulling a library for such a
+   seemingly trivial task, you can always write your own drop-in replacement for
+   =assert=. For example:
+
+#+BEGIN_SRC clojure
+(defmacro hope
+  "Check if the given form is truthy, otherwise throw an exception with
+  the given message and some additional context. Alternative to
+  `assert` with Exceptions instead of Errors."
+  [form otherwise-msg & values]
+  `(or ~form
+       (throw (ex-info ~otherwise-msg
+                       (hash-map :form '~form
+                                 ~@(mapcat (fn [v] [`'~v v]) values))))))
+
+(let [coll [1 2 3 4]
+      pred odd?]
+  (hope (every? pred coll)
+        "Not every item matches!"
+        pred coll))
+
+;; 1. Unhandled clojure.lang.ExceptionInfo
+;;    Not every item matches!
+;;    {pred #function[clojure.core/odd?], coll [1 2 3 4], :form (every? pred coll)}
+#+END_SRC
+
+   We use this macro in addition to Schema. It is literally just =assert= which
+   throws Exceptions, and with slightly more horsepower. And it is small enough
+   to shove it into =util.clj= or what have you.
+
+   In summary, there are plenty of better alternatives to =assert= for it to
+   fade into obsolescence. Choose the one you like most and don't repeat the
+   mistakes of others.

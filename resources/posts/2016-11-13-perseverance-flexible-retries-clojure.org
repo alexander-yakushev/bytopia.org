@@ -1,0 +1,109 @@
+#+title: Perseverance: flexible retries for Clojure
+#+tags: clojure fault-tolerance
+#+OPTIONS: toc:nil author:nil
+
+Few of us have the luxury to work exclusively with reliable systems. Sure,
+nothing is 100% reliable, but as long as you use only the resources local to a
+single machine, you may disregard the possibility of failure. However, as soon
+the network is involved, a whole array of problems emerges. You can no longer be
+sure that an HTTP request succeeds, or a file gets downloaded, or a TCP stream
+doesn't close midway. Thus, you have to protect your program from such
+calamities and devise a recovery plan in advance.
+
+Generic fault tolerance in distributed systems is an incredibly difficult topic
+to contemplate on, so we won't trouble ourselves with it today. Instead, I want
+to discuss simpler matters, when an unsuccessful operation can just be tried
+again. It is usually true for actions that are immutable or idempotent, such as
+HTTP GET requests. We run into these scenarios quite often, so we created
+[[https://github.com/grammarly/perseverance][Perseverance]].
+
+#+readmore
+
+Most languages (Clojure included) already have libraries to retry failed
+operations. They are trivial to implement as their core logic is just a loop
+that hammers an action until it succeeds. Extra sophistication is provided by
+various delay strategies, but the main premise remains the same across all
+implementations. What I always found suboptimal about this approach is that it
+requires you to specify the retry strategy upfront --- which does not contribute
+to reusability of such code. When you write a function that downloads a file
+from S3, do you know how many retry attempts are enough? Say, one caller wants
+to keep trying till the end of time if necessary. Another caller may intend to
+make a quick attempt and then fallback to something else. Without knowing all of
+the usage patterns in advance, the low-level code cannot make proper decisions.
+However, if retry handlers are placed in the higher levels of the system, the
+handling becomes much coarser (think redownloading a single file vs. starting
+the whole batch anew).
+
+At this point, an insightful reader might notice: "This is a textbook problem
+for Lisp's condition system!" Indeed, we at Grammarly write a lot of Common
+Lisp, so we were naturally inspired by its approach to error handling. Now, if
+you don't know what a condition system is, I recommend watching [[https://www.youtube.com/watch?v=zp0OEDcAro0][this talk by
+Chris Houser at Clojure/conj 2015]]. A key takeaway from this talk --- yes,
+Clojure doesn't have conditions like Common Lisp, but you can emulate them with
+dynamic variables. And that's what we did.
+
+If you are still unsure what this is all about, check out the following example:
+
+#+BEGIN_SRC clojure
+(require '[perseverance.core :as p])
+
+;; Fake function that returns a list of files but fails the first three times.
+(let [cnt (atom 0)]
+  (defn list-s3-files []
+    (when (< @cnt 3)
+      (swap! cnt inc)
+      (throw (RuntimeException. "Failed to connect to S3.")))
+    (range 10)))
+
+;; Fake function that imitates downloading a file with 50/50 probability.
+(defn download-one-file [x]
+  (if (> (rand) 0.5)
+    (println (format "File #%d downloaded." x))
+    (throw (java.io.IOException. "Failed to download a file."))))
+
+;; Let's wrap the previous function in retriable. Notice that we make
+;; no assumptions about how it will be retried.
+(defn download-one-file-safe [x]
+  (p/retriable {} (download-one-file x)))
+
+;; Now to a function that downloads all files.
+(defn download-all-files []
+  (let [files (p/retriable {:catch [RuntimeException]}
+                           (list-s3-files))]
+    (mapv download-one-file-safe files)))
+
+;; Let's call it and see what happens.
+(download-all-files)
+;; Unhandled java.lang.RuntimeException: Failed to connect to S3.
+
+;; The exception is not handled because we haven't established the retry context.
+
+(p/retry {:strategy (p/constant-retry-strategy 2000)}
+         (download-all-files))
+
+;; java.lang.RuntimeException: Failed to connect to S3., retrying in 2.0 seconds...
+;; java.lang.RuntimeException: Failed to connect to S3., retrying in 2.0 seconds...
+;; java.io.IOException: Failed to download a file., retrying in 2.0 seconds...
+;; File #0 downloaded.
+;; File #1 downloaded.
+;; java.io.IOException: Failed to download a file., retrying in 2.0 seconds...
+;; File #2 downloaded.
+;; File #3 downloaded.
+;; java.io.IOException: Failed to download a file., retrying in 2.0 seconds...
+;; java.io.IOException: Failed to download a file., retrying in 2.0 seconds...
+;; File #4 downloaded.
+;; ...
+
+;; And the call eventually succeeds.
+#+END_SRC
+
+This example features almost everything you have to know about Perseverance. The
+library allows you to insulate unreliable pieces of code without thinking too
+much about how they are going to be used. Then, you wrap your top-level calls in
+one (or a few) =retry= macros, specifying the exact policy of retries that fits
+the task at hand. This separation helps us write functions and even libraries
+that are very generic and at the same time robust to failures.
+
+If you became interested, check the [[https://github.com/grammarly/perseverance][Github repository]]. There you will find the
+installation instructions and usage specifics. I’ll be happy to receive any
+comments and suggestions. Please, use this library and be [fault] tolerant!
