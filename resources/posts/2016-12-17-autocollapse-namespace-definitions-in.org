@@ -1,0 +1,142 @@
+#+title: Autocollapse namespace definitions (and other things) in Emacs
+#+tags: clojure emacs
+#+OPTIONS: toc:nil author:nil
+
+Any sufficiently advanced Clojure namespace is indistinguishable from a Java
+class. Gosh, thankfully that's false. But what does actually happen is that the
+=ns= form gets large and bloaty, just like the imports blob in your everyday
+Java file. Gone are the times when Clojure namespace declarations were small
+cozy gardens that you wanted to cultivate and tend to manually. The tooling kept
+up, so now [[https://cursive-ide.com/][Cursive]] promises you "to never have to look at your namespace form
+again," and [[https://github.com/clojure-emacs/clj-refactor.el][clj-refactor]] also has very handy features to auto-require
+namespaces, sort and cleanup requires, etc.
+
+Yet that huge intimidating 30-something LoC =ns= hasn't gone anywhere. I have to
+see it every time I jump to the top of the file, which I often do to inspect the
+atoms and refs stored in the current namespace. From mildly inconvenient, it
+turned into outright annoying, and every Emacs user knows that is the time to
+get your hands dirty.
+
+[[https://www.emacswiki.org/emacs/HideShow][HideShow]] is an awesome Emacs extensions that can collapse/fold parts of the
+code, just like many IDEs do. HideShow works with many programming languages,
+but the support for Lisps is especially good since every expression has unambiguous
+structure. To enable the extension you only need to add =hs-minor-mode= to the
+hooks of the programming mode, and then bind some custom keybinding for
+=hs-toggle-hiding= (the default one is really atrocious). I roll with =<C-tab>=.
+
+What about the promised automatic folding? There is no such off-the-shelf
+functionality, but that's the beauty of Emacs.
+
+#+BEGIN_SRC elisp
+(defun hs-clojure-hide-namespace-and-folds ()
+  "Hide the first (ns ...) expression in the file, and also all
+the (^:fold ...) expressions."
+  (interactive)
+  (hs-life-goes-on
+   (save-excursion
+     (goto-char (point-min))
+     (when (ignore-errors (re-search-forward "^(ns "))
+       (hs-hide-block))
+
+     (while (ignore-errors (re-search-forward "\\^:fold"))
+       (hs-hide-block)
+       (next-line)))))
+
+(defun hs-clojure-mode-hook ()
+  (interactive)
+  (hs-minor-mode 1)
+  (hs-clojure-hide-namespace-and-folds))
+
+(add-hook 'clojure-mode-hook 'hs-clojure-mode-hook)
+#+END_SRC
+
+You may notice this weird =^:fold= thing in the code. Well, with the advent of
+[[http://clojure.org/about/spec][clojure.spec]] there's now yet another thing at the top of my file that I love to
+have, but hate to see constantly. Hence, I "invented" a fold metadata that does
+nothing inside Clojure itself, but merely instructs our auto-folder to hide the
+marked block. Let's say I have a namespace like this:
+
+#+BEGIN_SRC clojure
+(ns com.example.srsbsns.core
+  (:require [buddy.auth :as b.auth]
+            buddy.auth.backends.session
+            buddy.auth.middleware
+            [clojure.core.async :as a :refer [>! <! >!! <!! chan go go-loop]]
+            [clojure.java.io :as io]
+            [clojure.java.shell :as sh]
+            [clojure.string :as str]
+            [clojure.spec :as s]
+            [clostache.parser :as tmpl]
+            [compojure.core :refer [defroutes GET POST]]
+            (com.example.srsbsns
+             [api :as api]
+             [auth :as auth]
+             [instance :as instance]
+             [project :as project]
+             [util :refer :all]
+             [state :as state])
+            [com.example.srsbsns.util.transit :refer
+             [wrap-transit wrap-transit encode-transit]]
+            [org.httpkit.client :as http]
+            [org.httpkit.server :as hk]
+            ring.middleware.defaults
+            ring.middleware.session)
+  (:import clojure.lang.ExceptionInfo java.util.UUID
+           (java.io File FileNotFoundException)))
+
+(^:fold do ;; Define specs
+ (s/def ::name (s/with-gen (and string? #(re-matches #"[\w\d-]+" %))
+                 #(gen/string-alphanumeric)))
+ (s/def ::description string?)
+ (s/def ::value string?)
+ (s/def ::version nat-int?)
+ (s/def ::latest-version nat-int?)
+ (s/def ::updated inst?)
+ (s/def ::revision (s/keys :req-un [::version ::value]))
+ (s/def ::revisions (s/coll-of ::revision))
+
+ (s/def ::full-widget
+   (s/keys :req-un [::name ::description ::revisions ::updated]))
+
+ (s/def ::widget-revision
+   (s/and (s/keys :req-un [::name ::description ::value ::version ::latest-version])
+          #(<= (:version %) (:latest-version %))))
+
+ (s/def ::widget-info
+   (s/keys :req-un [::name ::description ::latest-version ::updated])))
+
+(defn do-stuff
+  "The one that actually does something!"
+  [urgent?]
+  (delegate-to-someone-else :urgent true))
+#+END_SRC
+
+Painful, right? With our new hook in place, when we reopen this file again it
+becomes:
+
+#+BEGIN_SRC clojure
+(ns com.example.srsbsns.core...)
+
+(^:fold do ;; Define specs...)
+
+(defn do-stuff
+  "The one that actually does the something!"
+  [urgent?]
+  (delegate-to-someone-else :urgent true))
+#+END_SRC
+
+I rest my case.
+
+**** One weird trick
+
+     If your file is really huge (like, for instance, my =~/.emacs/init.el=),
+     you may want to collapse every form of it when first opened. You can
+     achieve this by putting the following block in the bottom of that file:
+
+     #+BEGIN_SRC elisp
+;; Local Variables:
+;; eval: (hs-hide-all)
+;; End:
+     #+END_SRC
+
+     Happy folding!

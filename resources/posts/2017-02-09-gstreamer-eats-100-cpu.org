@@ -1,0 +1,22 @@
+#+title: Gstreamer eats 100% CPU in Ubuntu 16.04 on AWS
+#+tags: ubuntu cloud systemd
+#+OPTIONS: toc:nil author:nil
+
+Annoying issue I happened to experience lately. Servers that we launch inside
+AWS from Ubuntu 16.04 AMI had this =gst-plugin-scanner= process running and
+eating 100% of one of CPU cores. Investigation revealed that this is a
+gstreamer-related process which had no business running in a non-graphical
+environment.
+
+Apparently, installing some packages on top of the base AMI made Systemd switch
+to =graphical.target= as the default target (runlevel in old terminology).
+Graphical target starts things like Lightdm which consequently spawn different
+GUI-related processes. And turns out some of those processes get their brains
+fried.
+
+The solution is to restore the default runlevel back to the multi-user one.
+
+: sudo systemctl set-default multi-user.target
+
+Note that you must do this either when you build your custom AMI, or you can do
+this on a working machine, but then reboot the instance.
