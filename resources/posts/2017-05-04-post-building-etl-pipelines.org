@@ -1,0 +1,7 @@
+#+title: Post: Building ETL pipelines with Clojure and transducers
+#+tags: clojure etl transducers
+#+nocut: true
+#+OPTIONS: toc:nil author:nil
+
+Just sharing a link to my post here so that it reaches Planet Clojure: [[https://tech.grammarly.com/blog/building-etl-pipelines-with-clojure][Building
+ETL pipelines with Clojure and transducers]].

@@ -19,4 +19,4 @@ The solution is to restore the default runlevel back to the multi-user one.
 : sudo systemctl set-default multi-user.target
 
 Note that you must do this either when you build your custom AMI, or you can do
-this on a working machine, but then reboot the instance.
+this on an already launched instance, but then reboot it.
